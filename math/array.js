@@ -42,34 +42,34 @@ goog.require('X.base');
  */
 X.array = function(comparator) {
 
-  //
-  // call the standard constructor
-  goog.base(this);
+    //
+    // call the standard constructor
+    goog.base(this);
 
-  //
-  // class attributes
+    //
+    // class attributes
 
-  /**
-   * @inheritDoc
-   * @const
-   */
-  this._classname = 'array';
+    /**
+     * @inheritDoc
+     * @const
+     */
+    this._classname = 'array';
 
-  /**
-   * The underlying array.
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._array = [];
+    /**
+     * The underlying array.
+     *
+     * @type {!Array}
+     * @protected
+     */
+    this._array = [];
 
-  /**
-   * The void pointer to a comparator function.
-   *
-   * @type {Function}
-   * @protected
-   */
-  this._comparator = comparator;
+    /**
+     * The void pointer to a comparator function.
+     *
+     * @type {Function}
+     * @protected
+     */
+    this._comparator = comparator;
 
 };
 // inherit from goog.math.Matrix
@@ -92,13 +92,13 @@ goog.inherits(X.array, X.base);
  */
 X.array.compare = function(arr1, arr2, offset1, offset2, _length) {
 
-  for(var i = 0; i < _length; i++) {
-    if(arr1[i + offset1] !== arr2[i + offset2]) {
-      return false;
+    for(var i = 0; i < _length; i++) {
+	if(arr1[i + offset1] !== arr2[i + offset2]) {
+	    return false;
+	}
     }
-  }
 
-  return true;
+    return true;
 
 };
 
@@ -111,9 +111,9 @@ X.array.compare = function(arr1, arr2, offset1, offset2, _length) {
  */
 X.array.prototype.add = function(object) {
 
-  this._array.push(object);
+    this._array.push(object);
 
-  return true;
+    return true;
 
 };
 
@@ -126,15 +126,15 @@ X.array.prototype.add = function(object) {
  */
 X.array.prototype.remove = function(object) {
 
-  var _index = this._array.indexOf(object);
+    var _index = this._array.indexOf(object);
 
-  if (_index > -1) {
+    if (_index > -1) {
 
-    this._array.splice(_index, 1);
+	this._array.splice(_index, 1);
 
-  }
+    }
 
-  return true;
+    return true;
 
 };
 
@@ -144,7 +144,9 @@ X.array.prototype.remove = function(object) {
  */
 X.array.prototype.clear = function() {
 
-  this._array.length = 0;
+    window.console.log('array.clear()');
+
+    this._array.length = 0;
 
 };
 
@@ -157,11 +159,11 @@ X.array.prototype.clear = function() {
  */
 X.array.prototype.swap_ = function(index1, index2) {
 
-  var tmp = this._array[index1];
+    var tmp = this._array[index1];
 
-  this._array[index1] = this._array[index2];
+    this._array[index1] = this._array[index2];
 
-  this._array[index2] = tmp;
+    this._array[index2] = tmp;
 
 };
 
@@ -175,17 +177,17 @@ X.array.prototype.swap_ = function(index1, index2) {
  */
 X.array.prototype.insert_ = function(begin, end, v) {
 
-  // SOME COMPARISON
-  // while (begin + 1 < end && this._array[begin + 1] < v) {
-  while (begin + 1 < end && this._comparator(this._array[begin + 1], v) < 0) {
+    // SOME COMPARISON
+    // while (begin + 1 < end && this._array[begin + 1] < v) {
+    while (begin + 1 < end && this._comparator(this._array[begin + 1], v) < 0) {
 
-    this.swap_(begin, begin + 1);
+	this.swap_(begin, begin + 1);
 
-    ++begin;
+	++begin;
 
-  }
+    }
 
-  this._array[begin] = v;
+    this._array[begin] = v;
 
 };
 
@@ -199,21 +201,21 @@ X.array.prototype.insert_ = function(begin, end, v) {
  */
 X.array.prototype.merge_inplace_ = function(begin, begin_right, end) {
 
-  for (; begin < begin_right; ++begin) {
+    for (; begin < begin_right; ++begin) {
 
-    // SOME COMPARISON
-    // if (this._array[begin] > this._array[begin_right]) {
-    if (this._comparator(this._array[begin], this._array[begin_right]) > 0) {
+	// SOME COMPARISON
+	// if (this._array[begin] > this._array[begin_right]) {
+	if (this._comparator(this._array[begin], this._array[begin_right]) > 0) {
 
-      var v = this._array[begin];
+	    var v = this._array[begin];
 
-      this._array[begin] = this._array[begin_right];
+	    this._array[begin] = this._array[begin_right];
 
-      this.insert_(begin_right, end, v);
+	    this.insert_(begin_right, end, v);
+
+	}
 
     }
-
-  }
 
 };
 
@@ -226,19 +228,19 @@ X.array.prototype.merge_inplace_ = function(begin, begin_right, end) {
  */
 X.array.prototype.msort_ = function(begin, end) {
 
-  var size = end - begin;
+    var size = end - begin;
 
-  if (size < 2) {
-    return;
-  }
+    if (size < 2) {
+	return;
+    }
 
-  var begin_right = begin + Math.floor(size / 2);
+    var begin_right = begin + Math.floor(size / 2);
 
-  this.msort_(begin, begin_right);
+    this.msort_(begin, begin_right);
 
-  this.msort_(begin_right, end);
+    this.msort_(begin_right, end);
 
-  this.merge_inplace_(begin, begin_right, end);
+    this.merge_inplace_(begin, begin_right, end);
 
 };
 
@@ -248,7 +250,7 @@ X.array.prototype.msort_ = function(begin, end) {
  */
 X.array.prototype.sort = function() {
 
-  this.msort_(0, this._array.length);
+    this.msort_(0, this._array.length);
 
 };
 
@@ -260,6 +262,8 @@ X.array.prototype.sort = function() {
  */
 X.array.prototype.values = function() {
 
-  return this._array;
+    window.console.log('array.values()');
+
+    return this._array;
 
 };

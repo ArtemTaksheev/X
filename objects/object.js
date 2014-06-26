@@ -52,53 +52,53 @@ goog.require('X.scalars');
  */
 X.object = function(object) {
 
-  //
-  // call the standard constructor of X.base
-  goog.base(this);
+    //
+    // call the standard constructor of X.base
+    goog.base(this);
 
-  //
-  // class attributes
+    //
+    // class attributes
 
-  /**
-   * @inheritDoc
-   * @const
-   */
-  this._classname = 'object';
+    /**
+     * @inheritDoc
+     * @const
+     */
+    this._classname = 'object';
 
-  /**
-   * The children of this object.
-   *
-   * @type {!Array}
-   * @protected
-   */
-  this._children = new Array();
+    /**
+     * The children of this object.
+     *
+     * @type {!Array}
+     * @protected
+     */
+    this._children = new Array();
 
-  /**
-   * The color table of this object.
-   *
-   * @type {?X.colortable}
-   * @protected
-   */
-  this._colortable = null;
+    /**
+     * The color table of this object.
+     *
+     * @type {?X.colortable}
+     * @protected
+     */
+    this._colortable = null;
 
-  /**
-   * The scalars of this object.
-   *
-   * @type {?X.scalars}
-   * @protected
-   */
-  this._scalars = null;
+    /**
+     * The scalars of this object.
+     *
+     * @type {?X.scalars}
+     * @protected
+     */
+    this._scalars = null;
 
 
-  // inject functionality
-  inject(this, new X.displayable()); // this object is displayable
+    // inject functionality
+    inject(this, new X.displayable()); // this object is displayable
 
-  if (goog.isDefAndNotNull(object)) {
+    if (goog.isDefAndNotNull(object)) {
 
-    // copy the properties of the given object over
-    this.copy_(object);
+	// copy the properties of the given object over
+	this.copy_(object);
 
-  }
+    }
 
 };
 // inherit from X.base
@@ -114,68 +114,68 @@ goog.inherits(X.object, X.base);
  */
 X.object.prototype.copy_ = function(object) {
 
-  this._type = object._type;
+    this._type = object._type;
 
-  this._transform = new X.transform();
-  this._transform._matrix = new Float32Array(object._transform._matrix);
+    this._transform = new X.transform();
+    this._transform._matrix = new Float32Array(object._transform._matrix);
 
-  this._color = object._color.slice();
+    this._color = object._color.slice();
 
-  if (object._points) {
-    this._points = new X.triplets(object._points.length, object._points);
-  }
-  if (object._normals) {
-    this._normals = new X.triplets(object._normals.length, object._normals);
-  }
-  if (object._colors) {
-    this._colors = new X.triplets(object._colors.length, object._colors);
-  }
-
-  // do we need to copy this? maybe not
-  this._texture = object._texture;
-  this._textureCoordinateMap = object._textureCoordinateMap;
-
-  if (object._file) {
-    // only if a file is configured
-    this._file = new X.file(new String(object._file._path).toString());
-  }
-
-  this._opacity = object._opacity;
-
-  //
-  // children
-  this._children.length = 0; // remove old ones
-  var _oldChildren = object._children;
-  if (_oldChildren) {
-    var _oldChildrenLength = _oldChildren.length;
-    var i = 0;
-    for (i = 0; i < _oldChildrenLength; i++) {
-
-      // dynamic duck typing
-      var classname = _oldChildren[i]._classname;
-      this._children.push(new X[classname](_oldChildren[i]));
-
+    if (object._points) {
+	this._points = new X.triplets(object._points.length, object._points);
     }
-  }
+    if (object._normals) {
+	this._normals = new X.triplets(object._normals.length, object._normals);
+    }
+    if (object._colors) {
+	this._colors = new X.triplets(object._colors.length, object._colors);
+    }
 
-  this._visible = object._visible;
+    // do we need to copy this? maybe not
+    this._texture = object._texture;
+    this._textureCoordinateMap = object._textureCoordinateMap;
 
-  this._pointsize = object._pointsize;
+    if (object._file) {
+	// only if a file is configured
+	this._file = new X.file(new String(object._file._path).toString());
+    }
 
-  this._linewidth = object._linewidth;
+    this._opacity = object._opacity;
 
-  if (object._caption) {
-    // only if a caption is configured
-    this._caption = new String(object._caption).toString();
-  }
+    //
+    // children
+    this._children.length = 0; // remove old ones
+    var _oldChildren = object._children;
+    if (_oldChildren) {
+	var _oldChildrenLength = _oldChildren.length;
+	var i = 0;
+	for (i = 0; i < _oldChildrenLength; i++) {
 
-  this._magicmode = object._magicmode;
+	    // dynamic duck typing
+	    var classname = _oldChildren[i]._classname;
+	    this._children.push(new X[classname](_oldChildren[i]));
 
-  this._pickable = object._pickable;
+	}
+    }
 
-  this._pointIndices = object._pointIndices.slice();
+    this._visible = object._visible;
 
-  this._dirty = true;
+    this._pointsize = object._pointsize;
+
+    this._linewidth = object._linewidth;
+
+    if (object._caption) {
+	// only if a caption is configured
+	this._caption = new String(object._caption).toString();
+    }
+
+    this._magicmode = object._magicmode;
+
+    this._pickable = object._pickable;
+
+    this._pointIndices = object._pointIndices.slice();
+
+    this._dirty = true;
 
 };
 
@@ -187,13 +187,13 @@ X.object.prototype.copy_ = function(object) {
  */
 X.object.prototype.__defineGetter__('colortable', function() {
 
-  if (!this._colortable) {
+    if (!this._colortable) {
 
-    this._colortable = new X.colortable();
+	this._colortable = new X.colortable();
 
-  }
+    }
 
-  return this._colortable;
+    return this._colortable;
 
 });
 
@@ -205,13 +205,13 @@ X.object.prototype.__defineGetter__('colortable', function() {
  */
 X.object.prototype.__defineGetter__('scalars', function() {
 
-  if (!this._scalars) {
+    if (!this._scalars) {
 
-    this._scalars = new X.scalars();
+	this._scalars = new X.scalars();
 
-  }
+    }
 
-  return this._scalars;
+    return this._scalars;
 
 });
 
@@ -224,7 +224,7 @@ X.object.prototype.__defineGetter__('scalars', function() {
  */
 X.object.prototype.__defineGetter__('children', function() {
 
-  return this._children;
+    return this._children;
 
 });
 
@@ -235,9 +235,9 @@ X.object.prototype.__defineGetter__('children', function() {
  */
 X.object.prototype.modified = function(propagateEvent) {
 
-  var modifiedEvent = new X.event.ModifiedEvent();
-  modifiedEvent._object = this;
-  this.dispatchEvent(modifiedEvent);
+    var modifiedEvent = new X.event.ModifiedEvent();
+    modifiedEvent._object = this;
+    this.dispatchEvent(modifiedEvent);
 
 };
 
@@ -248,9 +248,9 @@ X.object.prototype.modified = function(propagateEvent) {
  */
 X.object.prototype.remove = function(propagateEvent) {
 
-  var removeEvent = new X.event.RemoveEvent();
-  removeEvent._object = this;
-  this.dispatchEvent(removeEvent);
+    var removeEvent = new X.event.RemoveEvent();
+    removeEvent._object = this;
+    this.dispatchEvent(removeEvent);
 
 };
 
@@ -268,49 +268,49 @@ X.object.prototype.remove = function(propagateEvent) {
  */
 X.object.OPACITY_COMPARATOR = function(object1, object2) {
 
-  // check if we have two valid objects to compare
-  if (!goog.isDefAndNotNull(object1) || !goog.isDefAndNotNull(object2) ||
-      !(object1 instanceof X.object) || !(object2 instanceof X.object)) {
+    // check if we have two valid objects to compare
+    if (!goog.isDefAndNotNull(object1) || !goog.isDefAndNotNull(object2) ||
+	!(object1 instanceof X.object) || !(object2 instanceof X.object)) {
 
-    throw new Error('Fatal: Two valid X.objects are required for comparison.');
-
-  }
-
-  // full opaque objects should always be rendered first
-  if (object1._opacity == 1) {
-
-    // always put object1 before object2
-    return -1;
-
-  }
-  if (object2._opacity == 1) {
-
-    // always put object2 before object1
-    return 1;
-
-  }
-
-  if (goog.isDefAndNotNull(object1._distance) &&
-      goog.isDefAndNotNull(object2._distance)) {
-
-    // order back-to-front from the viewer's eye
-
-    if (object1._distance > object2._distance) {
-
-      // object2 is closer so object1 should be ordered (drawn) before object2
-      return -1;
-
-    } else if (object1._distance <= object2._distance) {
-
-      // object 1 is closer so object1 should be ordered (drawn) after object2
-      return 1;
+	throw new Error('Fatal: Two valid X.objects are required for comparison.');
 
     }
 
+    // full opaque objects should always be rendered first
+    if (object1._opacity == 1) {
 
-  }
+	// always put object1 before object2
+	return -1;
 
-  return 1;
+    }
+    if (object2._opacity == 1) {
+
+	// always put object2 before object1
+	return 1;
+
+    }
+
+    if (goog.isDefAndNotNull(object1._distance) &&
+	goog.isDefAndNotNull(object2._distance)) {
+
+	// order back-to-front from the viewer's eye
+
+	if (object1._distance > object2._distance) {
+
+	    // object2 is closer so object1 should be ordered (drawn) before object2
+	    return -1;
+
+	} else if (object1._distance <= object2._distance) {
+
+	    // object 1 is closer so object1 should be ordered (drawn) after object2
+	    return 1;
+
+	}
+
+
+    }
+
+    return 1;
 
 };
 
