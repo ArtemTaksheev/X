@@ -900,6 +900,9 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
  */
 X.renderer2D.prototype.render_ = function(picking, invoked) {
 
+
+    window.console.log('renderer2D.render_()');
+
     // call the render_ method of the superclass
     goog.base(this, 'render_', picking, invoked);
 
@@ -1026,8 +1029,11 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
     var _redraw_required = (this._currentSlice != _currentSlice ||
 			    this._lowerThreshold != _lowerThreshold ||
 			    this._upperThreshold != _upperThreshold ||
-			    this._windowLow != _windowLow || this._windowHigh != _windowHigh || (_labelmapShowOnlyColor && !X.array
-												 .compare(_labelmapShowOnlyColor, this._labelmapShowOnlyColor, 0, 0, 4)));
+			    this._windowLow != _windowLow || 
+			    this._windowHigh != _windowHigh || 
+			    (_labelmapShowOnlyColor && !X.array
+			     .compare(_labelmapShowOnlyColor, 
+				      this._labelmapShowOnlyColor, 0, 0, 4)));
 
     if (_redraw_required) {
 	// update FBs with new size
@@ -1050,7 +1056,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 	    var _color = [0, 0, 0, 0];
 	    var _label = [0, 0, 0, 0];
 
-	    // grab the pixel intensity
+	    // grab the pixel intensity -
+	    // IGNORES GBA VALUES!!!!
 	    var _intensity = _sliceData[_index] / 255 * _maxScalarRange;
 	    var _origIntensity = _sliceData[_index];
 
@@ -1066,16 +1073,35 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		// intensity
 
 		// map volume scalars to a linear color gradient
-		var maxColor = new goog.math.Vec3(_volume._maxColor[0],
-						  _volume._maxColor[1], _volume._maxColor[2]);
+		/*var maxColor = new goog.math.Vec3(_volume._maxColor[0],
+						  _volume._maxColor[1],
+						  _volume._maxColor[2]);*/
+
+		//EXPERIMENTING WITH THESE - ARE THESE ALWAYS THE SAME ie 0-1
+		var maxColor = new goog.math.Vec3(1, 1, 1);
+
+		var minColor = new goog.math.Vec3(0, 0, 0);
+
+		/*
 		var minColor = new goog.math.Vec3(_volume._minColor[0],
-						  _volume._minColor[1], _volume._minColor[2]);
+						  _volume._minColor[1], 
+						  _volume._minColor[2]);*/
+		/*
 		_color = maxColor.scale(_origIntensity).add(
 		    minColor.scale(255 - _origIntensity));
 
 		// .. and back to an array
-		_color = [Math.floor(_color.x), Math.floor(_color.y),
-			  Math.floor(_color.z), 255];
+		_color = [Math.floor(_color.x), 
+			  Math.floor(_color.y),
+			  Math.floor(_color.z), 
+			  255];
+			  */
+
+		_color = [_sliceData[_index], 
+			  _sliceData[_index + 1],
+			  _sliceData[_index + 2], 
+			  _sliceData[_index + 3]];
+
 
 		if (_currentLabelMap) {
 
@@ -1084,8 +1110,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    if (_labelmapShowOnlyColor[3] == -255) {
 
 			// all labels are shown
-			_label = [_labelData[_index], _labelData[_index + 1],
-				  _labelData[_index + 2], _labelData[_index + 3]];
+			_label = [_labelData[_index], 
+				  _labelData[_index + 1],
+				  _labelData[_index + 2], 
+				  _labelData[_index + 3]];
 
 		    } else {
 
@@ -1094,8 +1122,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 					    4)) {
 
 			    // this label matches
-			    _label = [_labelData[_index], _labelData[_index + 1],
-				      _labelData[_index + 2], _labelData[_index + 3]];
+			    _label = [_labelData[_index], 
+				      _labelData[_index + 1],
+				      _labelData[_index + 2], 
+				      _labelData[_index + 3]];
 
 			}
 
@@ -1211,6 +1241,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
     }
 
+    /*
     // if enabled, show slice navigators
     if (this._config['SLICENAVIGATORS']) {
 
@@ -1298,7 +1329,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 	}
 
-    }
+    }*/
 
 };
 
