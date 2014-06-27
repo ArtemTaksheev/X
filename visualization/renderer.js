@@ -527,6 +527,31 @@ X.renderer.prototype.__defineGetter__('container', function() {
 
 
 /**
+   GETTER FOR OBJECTS
+   
+ */
+X.renderer.prototype.__defineGetter__('objects', function() {
+
+    return this._objects;
+
+});
+
+
+
+X.renderer.prototype.__defineGetter__('topLevelObjects', function() {
+
+    return this._topLevelObjects;
+
+});
+
+
+X.renderer.prototype.__defineSetter__('topLevelObjects', function(topLevelObjects) {
+
+    this._topLevelObjects = topLevelObjects;
+
+});
+/**
+/**
  * Set the container for this renderer. This has to happen before
  * X.renderer.init() is called.
  *

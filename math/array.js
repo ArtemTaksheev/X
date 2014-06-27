@@ -144,7 +144,7 @@ X.array.prototype.remove = function(object) {
  */
 X.array.prototype.clear = function() {
 
-    window.console.log('array.clear()');
+    //window.console.log('array.clear()');
 
     this._array.length = 0;
 
@@ -261,8 +261,6 @@ X.array.prototype.sort = function() {
  * @return {!Array} The complete array.
  */
 X.array.prototype.values = function() {
-
-    window.console.log('array.values()');
 
     return this._array;
 

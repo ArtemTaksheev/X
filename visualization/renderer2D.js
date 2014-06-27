@@ -391,31 +391,6 @@ X.renderer2D.prototype.__defineSetter__('orientation', function(orientation) {
 
 });
 
-
-/**
-   GETTER FOR OBJECTS
-   
- */
-X.renderer2D.prototype.__defineGetter__('objects', function() {
-
-    return this._objects;
-
-});
-
-
-
-X.renderer2D.prototype.__defineGetter__('topLevelObjects', function() {
-
-    return this._topLevelObjects;
-
-});
-
-
-X.renderer2D.prototype.__defineSetter__('topLevelObjects', function(topLevelObjects) {
-
-    this._topLevelObjects = topLevelObjects;
-
-});
 /**
  * Get the convention of this renderer.
  *
