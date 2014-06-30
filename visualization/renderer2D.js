@@ -235,6 +235,9 @@ X.renderer2D.prototype.onWindowLevel = function() {
  */
 X.renderer2D.prototype.onScroll_ = function(event) {
 
+    window.console.log('X.renderer2D.onScroll_()');
+
+
     goog.base(this, 'onScroll_', event);
 
     // grab the current volume
@@ -534,6 +537,9 @@ X.renderer2D.prototype.volumeChildrenIndex_ = function(targetOrientation) {
  */
 X.renderer2D.prototype.update_ = function(object) {
 
+    window.console.log('X.renderer2d.update_');
+    //window.console.log(object);
+
     // call the update_ method of the superclass
     goog.base(this, 'update_', object);
 
@@ -567,9 +573,13 @@ X.renderer2D.prototype.update_ = function(object) {
     if (goog.isDefAndNotNull(labelmap) && goog.isDefAndNotNull(labelmap._file) &&
 	labelmap._file._dirty) {
 
+	window.console.log('X.renderer2d.update_ labelMap!');
+
 	// a labelmap file is associated to this object and it is dirty..
 	// background: we always want to parse label maps first
 	// run the update_ function on the labelmap object
+
+	//ODD THAT IT WOULD RUN IT AGAIN WITH A LABELMAP?
 
 	this.update_(labelmap);
 
@@ -584,6 +594,8 @@ X.renderer2D.prototype.update_ = function(object) {
     if (goog.isDefAndNotNull(colortable) &&
 	goog.isDefAndNotNull(colortable._file) && colortable._file._dirty) {
 
+	window.console.log('X.renderer2d.update_ colorTable!');
+
 	// a colortable file is associated to this object and it is dirty..
 	// start loading
 	this._loader.load(colortable, object);
@@ -597,6 +609,8 @@ X.renderer2D.prototype.update_ = function(object) {
     //
     // with multiple files
     if (goog.isDefAndNotNull(file) && goog.isArray(file)) {
+
+	window.console.log('X.renderer2d.update_ multiple files!');
 
 	// this object holds multiple files, a.k.a it is a DICOM series
 	// check if we already loaded all the files
@@ -633,6 +647,8 @@ X.renderer2D.prototype.update_ = function(object) {
 
     // with one file
     else if (goog.isDefAndNotNull(file) && file._dirty) {
+
+	window.console.log('X.renderer2d.update_ just one file!');
 
 	// this object is based on an external file and it is dirty..
 	// start loading..

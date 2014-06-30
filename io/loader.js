@@ -61,33 +61,33 @@ goog.require('goog.structs.Map');
  */
 X.loader = function() {
 
-  // call the standard constructor of X.base
-  goog.base(this);
+    // call the standard constructor of X.base
+    goog.base(this);
 
-  //
-  // class attributes
+    //
+    // class attributes
 
-  /**
-   * @inheritDoc
-   * @const
-   */
-  this._classname = 'loader';
+    /**
+     * @inheritDoc
+     * @const
+     */
+    this._classname = 'loader';
 
-  /**
-   * The hash map holding all the jobs and their status.
-   *
-   * @type {!goog.structs.Map}
-   * @protected
-   */
-  this._jobs = new goog.structs.Map();
+    /**
+     * The hash map holding all the jobs and their status.
+     *
+     * @type {!goog.structs.Map}
+     * @protected
+     */
+    this._jobs = new goog.structs.Map();
 
-  /**
-   * The overall progress value in the range of 0 and 1.
-   *
-   * @type {!number}
-   * @protected
-   */
-  this._progress = 0;
+    /**
+     * The overall progress value in the range of 0 and 1.
+     *
+     * @type {!number}
+     * @protected
+     */
+    this._progress = 0;
 
 };
 // inherit from X.base
@@ -101,8 +101,11 @@ goog.inherits(X.loader, X.base);
  */
 X.loader.prototype.completed = function() {
 
-  // now we check if all of our jobs are completed
-  return !this._jobs.containsValue(false);
+    //window.console.log('X.loader.completed()');
+    //this gets queried ALOT when rendering!
+
+    // now we check if all of our jobs are completed
+    return !this._jobs.containsValue(false);
 
 };
 
@@ -116,24 +119,26 @@ X.loader.prototype.completed = function() {
  */
 X.loader.prototype.addProgress = function(value) {
 
-  // we have a three stage system during loading
-  //
-  // stage 1: loading in X.loader
-  // stage 2: parsing in X.parser (when loading textures, this does not happen
-  // so the loading adds a 2 in total)
-  // stage 3: setting up in X.renderer
-  //
-  // each stage adds progress from 0..1 with a total of 1 at the end
-  // add a fake job to prevent the user starring at a full progress bar
-  this._progress += value / (this._jobs.getCount()) / 3;
+    window.console.log('X.loader.addProgress()');
 
-  // clamp progress to 0..1
-  this._progress = Math.min(1, this._progress);
+    // we have a three stage system during loading
+    //
+    // stage 1: loading in X.loader
+    // stage 2: parsing in X.parser (when loading textures, this does not happen
+    // so the loading adds a 2 in total)
+    // stage 3: setting up in X.renderer
+    //
+    // each stage adds progress from 0..1 with a total of 1 at the end
+    // add a fake job to prevent the user starring at a full progress bar
+    this._progress += value / (this._jobs.getCount()) / 3;
 
-  // fire a progress event so the progressbar can display something
-  var progressEvent = new X.event.ProgressEvent();
-  progressEvent._value = this._progress;
-  this.dispatchEvent(progressEvent);
+    // clamp progress to 0..1
+    this._progress = Math.min(1, this._progress);
+
+    // fire a progress event so the progressbar can display something
+    var progressEvent = new X.event.ProgressEvent();
+    progressEvent._value = this._progress;
+    this.dispatchEvent(progressEvent);
 
 };
 
@@ -150,29 +155,31 @@ X.loader.prototype.addProgress = function(value) {
  */
 X.loader.prototype.checkFileFormat = function(container) {
 
-  // get the associated file of the object
-  var filepath = container._file._path;
+    window.console.log('X.loader.checkFileFormat()');
 
-  // grab the file extension
-  var extension = filepath.split('.').pop().toUpperCase();
+    // get the associated file of the object
+    var filepath = container._file._path;
 
-  // support no extensions
-  if (extension == filepath.toUpperCase()) {
+    // grab the file extension
+    var extension = filepath.split('.').pop().toUpperCase();
 
-    // this means no extension
-    extension = '';
+    // support no extensions
+    if (extension == filepath.toUpperCase()) {
 
-  }
+	// this means no extension
+	extension = '';
 
-  // check if the file format is supported
-  if (!(extension in X.loader.extensions)) {
+    }
 
-    throw new Error('The ' + extension + ' file format is not supported.');
+    // check if the file format is supported
+    if (!(extension in X.loader.extensions)) {
 
-  }
+	throw new Error('The ' + extension + ' file format is not supported.');
 
-  return [filepath, extension, X.loader.extensions[extension][0],
-          X.loader.extensions[extension][1], X.loader.extensions[extension][2]];
+    }
+
+    return [filepath, extension, X.loader.extensions[extension][0],
+            X.loader.extensions[extension][1], X.loader.extensions[extension][2]];
 
 };
 
@@ -188,60 +195,66 @@ X.loader.prototype.checkFileFormat = function(container) {
  */
 X.loader.prototype.load = function(container, object) {
 
-  if (!container || !object) {
+    window.console.log('X.loader.load()');
 
-    // should not happen
-    throw new Error('No container or object to load.');
+    if (!container || !object) {
 
-  }
+	// should not happen
+	throw new Error('No container or object to load.');
 
-  // check if job is already monitored..
-  // then it is safe to exit
-  if (this._jobs.containsKey(container._id) && !this._jobs.get(container._id)) {
+    }
 
-    return;
+    // check if job is already monitored..
+    // then it is safe to exit
+    if (this._jobs.containsKey(container._id) && !this._jobs.get(container._id)) {
 
-  }
+	return;
 
-  // add this loading job to our jobs map
-  this._jobs.set(container._id, false);
+    }
 
-  // check the file format which returns the filepath, extension and the parser
-  var _checkresult = this.checkFileFormat(container);
-  var filepath = _checkresult[0];
+    // add this loading job to our jobs map
+    this._jobs.set(container._id, false);
 
-  if (container._filedata != null) {
+    // check the file format which returns the filepath, extension and the parser
+    var _checkresult = this.checkFileFormat(container);
+    var filepath = _checkresult[0];
 
-    // we have raw file data attached and therefor can skip the loading
-    this.parse(null, container, object);
+    if (container._filedata != null) {
 
-    // .. and jump out
-    return;
+	window.console.log('X.loader.load() - raw file data present');
 
-  }
+	// we have raw file data attached and therefor can skip the loading
+	this.parse(null, container, object);
 
-  // we use a simple XHR to get the file contents
-  // this works for binary and for ascii files
-  var request = new XMLHttpRequest();
+	// .. and jump out
+	return;
 
-  // listen to abort events
-  goog.events.listen(request, 'abort', this.failed.bind(this, request,
-      container, object));
+    }
 
-  // listen to error events
-  goog.events.listen(request, 'error', this.failed.bind(this, request,
-      container, object));
+    // we use a simple XHR to get the file contents
+    // this works for binary and for ascii files
+    var request = new XMLHttpRequest();
 
-  // listen to completed events which triggers parsing
-  goog.events.listen(request, 'load', this.parse.bind(this, request, container,
-      object));
+    window.console.log('X.loader.load() - running XMLHttpRequest');
 
-  // configure the URL
-  request.open('GET', filepath, true);
-  request.responseType = 'arraybuffer';
+    // listen to abort events
+    goog.events.listen(request, 'abort', this.failed.bind(this, request,
+							  container, object));
 
-  // .. and GO!
-  request.send(null);
+    // listen to error events
+    goog.events.listen(request, 'error', this.failed.bind(this, request,
+							  container, object));
+
+    // listen to completed events which triggers parsing
+    goog.events.listen(request, 'load', this.parse.bind(this, request, container,
+							object));
+
+    // configure the URL
+    request.open('GET', filepath, true);
+    request.responseType = 'arraybuffer';
+
+    // .. and GO!
+    request.send(null);
 
 };
 
@@ -258,43 +271,49 @@ X.loader.prototype.load = function(container, object) {
  */
 X.loader.prototype.parse = function(request, container, object) {
 
-  // downloading completed, add progress
-  this.addProgress(1.0);
+    window.console.log('X.loader.parse!!()');
+    
+    // downloading completed, add progress
+    this.addProgress(1.0);
 
-  // we use a timeout here to let the progress bar be able to breath and show
-  // something
-  setTimeout(function() {
+    // we use a timeout here to let the progress bar be able to breath and show
+    // something
+    setTimeout(function() {
 
-    // check the file format which returns the filepath, extension and the
-    // parser
-    var _checkresult = this.checkFileFormat(container);
-    var parser = _checkresult[2]; // the (uninstantiated) parser
-    var flags = _checkresult[3]; // some (optional) custom flags
+	// check the file format which returns the filepath, extension and the
+	// parser
+	var _checkresult = this.checkFileFormat(container);
+	var parser = _checkresult[2]; // the (uninstantiated) parser
+	var flags = _checkresult[3]; // some (optional) custom flags
 
-    // instantiate the parser
-    var _parser = new parser;
+	// instantiate the parser
+	var _parser = new parser;
 
-    // listen once to a modified event
-    goog.events.listenOnce(_parser, X.event.events.MODIFIED, this.complete
-        .bind(this));
+	// listen once to a modified event
+	goog.events.listenOnce(_parser, X.event.events.MODIFIED, this.complete
+			       .bind(this));
 
-    // check if we have loaded data or attached raw data
-    var _data = container._filedata;
-    if (_data == null) {
+	// check if we have loaded data or attached raw data
+	var _data = container._filedata;
+	if (_data == null) {
 
-      // use the loaded data
-      _data = request.response;
+	    // use the loaded data
+	    _data = request.response;
 
-      // and also re-attach the arraybuffer
-      container._filedata = _data;
+	    // and also re-attach the arraybuffer
+	    container._filedata = _data;
 
-    }
+	}
 
-    // call the parse function and pass in the container, the object and the
-    // data stream and some additional value
-    _parser.parse(container, object, _data, flags);
+	// call the parse function and pass in the container, the object and the
+	// data stream and some additional value
+	
+	window.console.log('X.loader() _parser.parse()');
+	window.console.log(_parser);
 
-  }.bind(this), 100);
+	_parser.parse(container, object, _data, flags);
+
+    }.bind(this), 100);
 
 };
 
@@ -309,28 +328,38 @@ X.loader.prototype.parse = function(request, container, object) {
  */
 X.loader.prototype.complete = function(event) {
 
-  // parsing completed, add progress
-  this.addProgress(1.0);
+    window.console.log('X.loader.complete()');
 
-  // we use a timeout here to let the progress bar be able to breath and show
-  // something
-  setTimeout(function() {
-    var container = event._container;
-    var object = event._object;
+    // parsing completed, add progress
+    this.addProgress(1.0);
 
-    // mark the container's file as clean
-    container._file._dirty = false;
+    // we use a timeout here to let the progress bar be able to breath and show
+    // something
+    setTimeout(function() {
 
-    // .. but mark the container as dirty since its content changed
-    container._dirty = true;
+	window.console.log('X.loader.complete() - setTimeout..:');
 
-    // fire the modified event on the object
-    object.modified();
+	var container = event._container;
+	var object = event._object;
 
-    // mark the loading job as completed
-    this._jobs.set(container._id, true);
+	// mark the container's file as clean
+	container._file._dirty = false;
 
-  }.bind(this), 100);
+	// .. but mark the container as dirty since its content changed
+	container._dirty = true;
+
+	// fire the modified event on the object
+	object.modified();
+
+	// mark the loading job as completed
+	this._jobs.set(container._id, true);
+
+	window.console.log('X.loader.complete() - this._jobs:');
+	window.console.log(this._jobs);
+
+    }.bind(this), 100);
+
+    window.console.log('X.loader.complete() - END');
 
 };
 
@@ -347,7 +376,7 @@ X.loader.prototype.complete = function(event) {
  */
 X.loader.prototype.failed = function(request, container, object) {
 
-  throw new Error('Loading failed: ', container, object);
+    throw new Error('Loading failed: ', container, object);
 
 };
 
@@ -358,40 +387,40 @@ X.loader.prototype.failed = function(request, container, object) {
  * @enum {Array}
  */
 X.loader.extensions = {
-  // support for the following extensions and the mapping to X.parsers as well
-  // as some custom flags and the result type
-  'OBJ': [X.parserOBJ, null],
-  'OFF': [X.parserOFF, null],
-  'STL': [X.parserSTL, null],
-  'VTK': [X.parserVTK, null],
-  'TRK': [X.parserTRK, null],
-  'MRC': [X.parserMRC, null],
-  'ST': [X.parserMRC, null],
-  // FSM, INFLATED, SMOOTHWM, SPHERE, PIAL and ORIG are all freesurfer meshes
-  'FSM': [X.parserFSM, null],
-  'INFLATED': [X.parserFSM, null],
-  'SMOOTHWM': [X.parserFSM, null],
-  'SPHERE': [X.parserFSM, null],
-  'PIAL': [X.parserFSM, null],
-  'ORIG': [X.parserFSM, null],
-  'NRRD': [X.parserNRRD, null],
-  'NII': [X.parserNII, null],
-  'GZ': [X.parserNII, null], // right now nii.gz is the only
-  // format ending .gz
-  'DCM': [X.parserDCM, null],
-  'DICOM': [X.parserDCM, null],
-  '': [X.parserDCM, null],
-  'CRV': [X.parserCRV, null],
-  'LABEL': [X.parserLBL, null],
-  'MGH': [X.parserMGZ, false],
-  'MGZ': [X.parserMGZ, true],
-  'RAW': [X.parserRAW, false],
-  'RZ': [X.parserRAW, true],
-  'TXT': [X.parserLUT, null],
-  'LUT': [X.parserLUT, null],
-  'PNG': [X.parserIMAGE, 'png'], // here we use the arraybuffer
-  // response type
-  'JPG': [X.parserIMAGE, 'jpeg'],
-  'JPEG': [X.parserIMAGE, 'jpeg'],
-  'GIF': [X.parserIMAGE, 'gif']
+    // support for the following extensions and the mapping to X.parsers as well
+    // as some custom flags and the result type
+    'OBJ': [X.parserOBJ, null],
+    'OFF': [X.parserOFF, null],
+    'STL': [X.parserSTL, null],
+    'VTK': [X.parserVTK, null],
+    'TRK': [X.parserTRK, null],
+    'MRC': [X.parserMRC, null],
+    'ST': [X.parserMRC, null],
+    // FSM, INFLATED, SMOOTHWM, SPHERE, PIAL and ORIG are all freesurfer meshes
+    'FSM': [X.parserFSM, null],
+    'INFLATED': [X.parserFSM, null],
+    'SMOOTHWM': [X.parserFSM, null],
+    'SPHERE': [X.parserFSM, null],
+    'PIAL': [X.parserFSM, null],
+    'ORIG': [X.parserFSM, null],
+    'NRRD': [X.parserNRRD, null],
+    'NII': [X.parserNII, null],
+    'GZ': [X.parserNII, null], // right now nii.gz is the only
+    // format ending .gz
+    'DCM': [X.parserDCM, null],
+    'DICOM': [X.parserDCM, null],
+    '': [X.parserDCM, null],
+    'CRV': [X.parserCRV, null],
+    'LABEL': [X.parserLBL, null],
+    'MGH': [X.parserMGZ, false],
+    'MGZ': [X.parserMGZ, true],
+    'RAW': [X.parserRAW, false],
+    'RZ': [X.parserRAW, true],
+    'TXT': [X.parserLUT, null],
+    'LUT': [X.parserLUT, null],
+    'PNG': [X.parserIMAGE, 'png'], // here we use the arraybuffer
+    // response type
+    'JPG': [X.parserIMAGE, 'jpeg'],
+    'JPEG': [X.parserIMAGE, 'jpeg'],
+    'GIF': [X.parserIMAGE, 'gif']
 };

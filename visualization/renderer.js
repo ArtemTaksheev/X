@@ -828,6 +828,8 @@ X.renderer.prototype.init = function(_contextName) {
  */
 X.renderer.prototype.add = function(object) {
 
+    window.console.log('X.renderer.add');
+
     // for constructable objects (e.g. cube, sphere, cylinder), we call the
     // modified() function to generate the CSG representations
     if (object instanceof X.cube || object instanceof X.sphere ||
@@ -889,6 +891,8 @@ X.renderer.prototype.remove = function(object) {
  * @protected
  */
 X.renderer.prototype.update_ = function(object) {
+
+    window.console.log('X.renderer.update_');
 
     if (!this._canvas || !this._context) {
 

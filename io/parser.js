@@ -53,6 +53,8 @@ goog.require('goog.vec.Mat4');
  */
 X.parser = function() {
 
+    window.console.log('X.parser()');
+
     //
     // call the standard constructor of X.base
     goog.base(this);
@@ -138,6 +140,8 @@ goog.inherits(X.parser, X.base);
  */
 X.parser.prototype.parse = function(container, object, data, flag) {
 
+    window.console.log('X.parser.parse()');
+
     throw new Error('The function parse() should be overloaded.');
 
 };
@@ -155,6 +159,8 @@ X.parser.prototype.parse = function(container, object, data, flag) {
  * @return {!Array} An array with length 2 containing the [min, max] values.
  */
 X.parser.prototype.arrayMinMax = function(data) {
+
+    window.console.log('X.parser.arrayMinMax()');
 
     var _min = Infinity;
     var _max = -Infinity;
@@ -195,6 +201,8 @@ X.parser.prototype.arrayMinMax = function(data) {
  */
 X.parser.prototype.parseChars = function(array, start, end) {
 
+    window.console.log('X.parser.parseChars()');
+
     // without borders, use the whole array
     if (start === undefined) {
 
@@ -229,6 +237,8 @@ X.parser.prototype.parseChars = function(array, start, end) {
  */
 X.parser.prototype.jumpTo = function(position) {
 
+    window.console.log('X.parser.jumpTo()');
+
     this._dataPointer = position;
 
 };
@@ -244,6 +254,8 @@ X.parser.prototype.jumpTo = function(position) {
  *          chunks The number of chunks to scan. By default, 1.
  */
 X.parser.prototype.scan = function(type, chunks) {
+
+    window.console.log('X.parser.scan()');
 
     if (!goog.isDefAndNotNull(chunks)) {
 
@@ -360,6 +372,8 @@ X.parser.prototype.flipEndianness = function(array, chunkSize) {
  */
 X.parser.computeRASBBox = function(IJKToRAS, MRIdim){
 
+    window.console.log('X.parser.computeRASBbox()');
+
     var _rasBB = [Number.MAX_VALUE, -Number.MAX_VALUE,
 		  Number.MAX_VALUE, -Number.MAX_VALUE,
 		  Number.MAX_VALUE, -Number.MAX_VALUE];
@@ -459,6 +473,8 @@ X.parser.computeRASBBox = function(IJKToRAS, MRIdim){
  * @static
  */
 X.parser.createIJKVolume = function(_data, _dims, _max){
+
+    window.console.log('X.parser.createIJKVolume()');
     
     // initiate variables
     // allocate images
@@ -514,6 +530,8 @@ X.parser.createIJKVolume = function(_data, _dims, _max){
  */
 X.parser.intersectionBBoxLine = function(_bbox, _sliceOrigin, _sliceNormal){
     
+    window.console.log('X.parser.intersectionBBoxLine()');
+
     var _solutionsIn = new Array();
     var _solutionsOut = new Array();
     
@@ -578,6 +596,8 @@ X.parser.intersectionBBoxLine = function(_bbox, _sliceOrigin, _sliceNormal){
  * @static
  */
 X.parser.intersectionBBoxPlane = function(_bbox, _sliceOrigin, _sliceNormal){
+
+    window.console.log('X.parser.intersectionBBoxPlane()');
 
     var _solutionsIn = new Array();
     var _solutionsOut = new Array();
@@ -645,6 +665,8 @@ X.parser.intersectionBBoxPlane = function(_bbox, _sliceOrigin, _sliceNormal){
  */
 X.parser.xyrasTransform = function(_sliceNormal, _XYNormal){
 
+    window.console.log('X.parser.xyrasTransform()');
+
     var _RASToXY = goog.vec.Mat4.createFloat32Identity();
     // no rotation needed if we are in the z plane already
     if(!goog.vec.Vec3.equals(_sliceNormal,_XYNormal)) {
@@ -699,6 +721,8 @@ X.parser.xyrasTransform = function(_sliceNormal, _XYNormal){
  * @static
  */
 X.parser.xyBBox = function(_solutionsXY){
+
+    window.console.log('X.parser.xyBBox()');
 
     var _xyBBox = [Number.MAX_VALUE, -Number.MAX_VALUE,
 		   Number.MAX_VALUE, -Number.MAX_VALUE,
@@ -762,6 +786,8 @@ X.parser.xyBBox = function(_solutionsXY){
  * @static
  */
 X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, _IJKVolume, object, hasLabelMap, colorTable){
+
+    window.console.log('X.parser.reslice2()');
 
     var sliceXY = new X.slice();
 
@@ -895,6 +921,8 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
 		var pixelValue_a = 0;
 		
 		if (colorTable) {
+
+		    //window.console.log('X.parser.reslice2() - colorTable present!');
 		    
 		    // color table!
 		    var lookupValue = colorTable.get(pixval);
@@ -1119,6 +1147,8 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
  * @return {!Array} The volume data as a 3D Array.
  */
 X.parser.prototype.reslice = function(object) {
+
+    window.console.log('X.parser.reslice()');
     
     // ------------------------------------------
     // CREATE IJK VOLUMES
