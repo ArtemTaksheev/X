@@ -119,7 +119,7 @@ X.loader.prototype.completed = function() {
  */
 X.loader.prototype.addProgress = function(value) {
 
-    window.console.log('X.loader.addProgress()');
+    //window.console.log('X.loader.addProgress()');
 
     // we have a three stage system during loading
     //

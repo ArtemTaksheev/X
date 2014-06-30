@@ -550,6 +550,14 @@ X.renderer.prototype.__defineSetter__('topLevelObjects', function(topLevelObject
     this._topLevelObjects = topLevelObjects;
 
 });
+
+
+X.renderer.prototype.__defineGetter__('loader', function() {
+
+    return this._loader;
+
+});
+
 /**
 /**
  * Set the container for this renderer. This has to happen before
@@ -892,7 +900,7 @@ X.renderer.prototype.remove = function(object) {
  */
 X.renderer.prototype.update_ = function(object) {
 
-    window.console.log('X.renderer.update_');
+    //window.console.log('X.renderer.update_');
 
     if (!this._canvas || !this._context) {
 
@@ -1056,6 +1064,8 @@ X.renderer.prototype.generateTree_ = function(object, level) {
  */
 X.renderer.prototype.render = function() {
 
+    //window.console.log('X.renderer.js.render()');
+
     if (!this._canvas || !this._context) {
 
 	throw new Error('The renderer was not initialized properly.');
@@ -1087,6 +1097,8 @@ X.renderer.prototype.render = function() {
     // LOADING..
     //
     if (!this._loader.completed()) {
+
+	window.console.log('X.renderer.js.render() - loader not ready');
 
 	// we are not ready yet.. the loader is still working;
 

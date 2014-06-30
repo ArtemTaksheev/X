@@ -506,6 +506,7 @@ X.renderer2D.prototype.resetViewAndRender = function() {
 };
 
 
+
 /**
  * Convenience method to get the index of the volume container for a given
  * orientation.
@@ -514,6 +515,7 @@ X.renderer2D.prototype.resetViewAndRender = function() {
  * @return {!number} The index of the volume children.
  * @private
  */
+
 X.renderer2D.prototype.volumeChildrenIndex_ = function(targetOrientation) {
 
     if (targetOrientation == 'X') {
@@ -530,6 +532,35 @@ X.renderer2D.prototype.volumeChildrenIndex_ = function(targetOrientation) {
 	return 2;
     }
 };
+
+
+
+/*CUSTOM FUNC FOR RELOADING THE COLOR TABLE*/
+
+/*
+X.renderer2D.prototype.resetColorTable = function(object) {
+
+    window.console.log('X.renderer2d.resetColorTable');
+    
+    var colortable = object._colortable;
+
+    //
+    // COLOR TABLE
+    //
+    if (goog.isDefAndNotNull(colortable) &&
+	goog.isDefAndNotNull(colortable._file) && colortable._file._dirty) {
+
+	window.console.log('X.renderer2d.update_ colorTable!');
+
+	// a colortable file is associated to this object and it is dirty..
+	// start loading
+	this._loader.load(colortable, object);
+
+	return;
+
+    }
+};
+*/
 
 
 /**
@@ -916,8 +947,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
  */
 X.renderer2D.prototype.render_ = function(picking, invoked) {
 
-
-    window.console.log('renderer2D.render_()');
+    //window.console.log('renderer2D.render_()');
 
     // call the render_ method of the superclass
     goog.base(this, 'render_', picking, invoked);
@@ -1371,3 +1401,5 @@ goog.exportSymbol('X.renderer2D.prototype.render',
 goog.exportSymbol('X.renderer2D.prototype.destroy',
 		  X.renderer2D.prototype.destroy);
 goog.exportSymbol('X.renderer2D.prototype.onSliceNavigation', X.renderer2D.prototype.onSliceNavigation);
+/*
+goog.exportSymbol('X.renderer2D.prototype.resetColorTable', X.renderer2D.prototype.resetColorTable);*/
