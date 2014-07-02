@@ -1398,6 +1398,8 @@ goog.exportSymbol('X.renderer2D.prototype.xy2ijk',
 		  X.renderer2D.prototype.xy2ijk);
 goog.exportSymbol('X.renderer2D.prototype.render',
 		  X.renderer2D.prototype.render);
+goog.exportSymbol('X.renderer2D.prototype.onResize',
+		  X.renderer2D.prototype.onResize);
 goog.exportSymbol('X.renderer2D.prototype.destroy',
 		  X.renderer2D.prototype.destroy);
 goog.exportSymbol('X.renderer2D.prototype.onSliceNavigation', X.renderer2D.prototype.onSliceNavigation);

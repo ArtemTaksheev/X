@@ -253,7 +253,7 @@ X.renderer.prototype.onComputing = function(event) {
  */
 X.renderer.prototype.onComputingEnd = function(event) {
 
-    // only do the following if the progressBar was not turned off
+   // only do the following if the progressBar was not turned off
     if (this._config['PROGRESSBAR_ENABLED']) {
 
 	if (this._progressBar2) {
@@ -406,6 +406,37 @@ X.renderer.prototype.onHover_ = function(event) {
  * @protected
  */
 X.renderer.prototype.onResize_ = function() {
+
+    // grab the new width and height of the container
+    var container = goog.dom.getElement(this._container);
+    this._width = container.clientWidth;
+    this._height = container.clientHeight;
+
+    // propagate it to the canvas
+    var canvas = goog.dom.getElement(this._canvas);
+    canvas.width = this._width;
+    canvas.height = this._height;
+
+    if (this._classname == 'renderer3D') {
+
+	// modify 3d viewport
+	this._context.viewport(0, 0, this._width, this._height);
+
+	// modify perspective
+	this._camera._perspective = X.matrix.makePerspective(X.matrix.identity(), this._camera._fieldOfView, (this._canvas.width/this._canvas.height), 1, 10000);
+
+    }
+
+    // .. and re-draw
+    //this.resetViewAndRender();
+
+};
+
+
+/**
+ * @public
+ */
+X.renderer.prototype.onResize = function() {
 
     // grab the new width and height of the container
     var container = goog.dom.getElement(this._container);

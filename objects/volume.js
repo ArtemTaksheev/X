@@ -358,6 +358,37 @@ X.volume.prototype.create_ = function(_info) {
     this._dirty = true;
 };
 
+
+X.volume.prototype.clearChildren = function() {
+
+    /*
+    // remove all old children
+    this._children.length = 0;
+    this._slicesX._children.length = 0;
+    this._slicesY._children.length = 0;
+    this._slicesZ._children.length = 0;
+
+    // add the new children
+    this._children.push(this._slicesX);
+    this._children.push(this._slicesY);
+    this._children.push(this._slicesZ);
+*/
+
+    /*
+    // setup image specific information
+    this._RASOrigin = _info.RASOrigin;
+    this._RASSpacing = _info.RASSpacing;
+    this._RASDimensions = _info.RASDimensions;
+    this._IJKToRAS = _info.IJKToRAS;
+    this._RASToIJK = _info.RASToIJK;
+    this._max = _info.max;
+    this._data = _info.data;
+    this._dirty = true;
+    */
+};
+
+
+
 /**
  * Re-show the slices or re-activate the volume rendering for this volume.
  *
@@ -453,8 +484,18 @@ X.volume.prototype.slicing_ = function() {
 
 	}
 
-	// RESLICE VOLUME IF NECESSARY!
+	// RESLICE VOLUME IF NECESSARY! - D.B.  - HOW TO RESET THIS?
+
 	if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
+
+
+	    window.console.log('X.volume.slicing_() - _children[xyz]:');
+	    window.console.log(this._children[xyz]);
+	    
+	    window.console.log('X.volume.slicing_() - _children[xyz]._children[...]:');
+	    window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
+
+
 
 	    // GO reslice!
 	    var _sliceOrigin = goog.vec.Vec3.createFloat32();
@@ -465,27 +506,25 @@ X.volume.prototype.slicing_ = function() {
 
 	    //attach labelmap
 	    if(this.hasLabelMap){
-		var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, this._BBox, this._labelmap._IJKVolume, this._labelmap, this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+		var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, 
+						    this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, 
+						    this._BBox, this._labelmap._IJKVolume, this._labelmap, 
+						    this._labelmap.hasLabelMap, this._labelmap._colortable._map);
 		this._labelmap._children[xyz]._children[parseInt(currentIndex, 10)] = _sliceLabel;
 		// add it to create the texture
 		this._labelmap._children[xyz].modified(true);
 	    }
 
 	    var colTable = null;
-	    /*
-	    if(this.colorTable){
-		window.console.log('X.volume.slicing_() - has colorTable');
-		colTable = this.colorTable;
-	    }*/
 
 	    if(this._colortable){
 		window.console.log('X.volume.slicing_() - has _colortable');
 		colTable = this._colortable;
 	    }
 
-
-	    window.console.log('X.volume.slicing_() - has colorTable');
-	    var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, this._BBox, this._IJKVolume, this, true, colTable);
+	    var _slice = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, 
+					   this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, 
+					   this._BBox, this._IJKVolume, this, true, colTable);
 
 	    if(this.hasLabelMap){
 		_slice._labelmap = _slice._texture;
@@ -496,6 +535,9 @@ X.volume.prototype.slicing_ = function() {
 
 	    // add it to renderer!
 	    this._children[xyz].modified(true);
+	} 
+	else{
+	    window.console.log('children data ALREADY LOADED');
 	}
 	// DONE RESLICING!
 
@@ -524,9 +566,9 @@ X.volume.prototype.slicing_ = function() {
 	    }
 
 	}
+	//_child._children[parseInt(oldIndex, 10)] = null;
 
     }
-
 };
 
 
@@ -1836,3 +1878,4 @@ goog.exportSymbol('X.volume.prototype.sliceInfoChanged', X.volume.prototype.slic
 goog.exportSymbol('X.volume.prototype.onComputing', X.volume.prototype.onComputing);
 goog.exportSymbol('X.volume.prototype.onComputingProgress', X.volume.prototype.onComputingProgress);
 goog.exportSymbol('X.volume.prototype.onComputingEnd', X.volume.prototype.onComputingEnd);
+goog.exportSymbol('X.volume.prototype.clearChildren', X.volume.prototype.clearChildren);

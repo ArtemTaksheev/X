@@ -105,6 +105,7 @@ X.loader.prototype.completed = function() {
     //this gets queried ALOT when rendering!
 
     // now we check if all of our jobs are completed
+
     return !this._jobs.containsValue(false);
 
 };
