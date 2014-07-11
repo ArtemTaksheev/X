@@ -397,7 +397,7 @@ X.volume.prototype.clearChildren = function() {
 X.volume.prototype.modified = function(propagateEvent) {
 
 
-    window.console.log('X.volume.modified()');
+    //window.console.log('X.volume.modified()');
 
     // by default, propagate event should be true
     propagateEvent = typeof propagateEvent !== 'undefined' ? propagateEvent
@@ -453,7 +453,7 @@ X.volume.prototype.modified = function(propagateEvent) {
  */
 X.volume.prototype.slicing_ = function() {
 
-    window.console.log('X.volume.slicing_()');
+    //window.console.log('X.volume.slicing_()');
 
     // display the current slices in X,Y and Z direction
     var xyz = 0; // 0 for x, 1 for y, 2 for z
@@ -489,11 +489,11 @@ X.volume.prototype.slicing_ = function() {
 	if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
 
 
-	    window.console.log('X.volume.slicing_() - _children[xyz]:');
-	    window.console.log(this._children[xyz]);
+	    //window.console.log('X.volume.slicing_() - _children[xyz]:');
+	    //window.console.log(this._children[xyz]);
 	    
-	    window.console.log('X.volume.slicing_() - _children[xyz]._children[...]:');
-	    window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
+	    //window.console.log('X.volume.slicing_() - _children[xyz]._children[...]:');
+	    //window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
 
 
 
@@ -518,7 +518,7 @@ X.volume.prototype.slicing_ = function() {
 	    var colTable = null;
 
 	    if(this._colortable){
-		window.console.log('X.volume.slicing_() - has _colortable');
+		//window.console.log('X.volume.slicing_() - has _colortable');
 		colTable = this._colortable;
 	    }
 
@@ -537,7 +537,7 @@ X.volume.prototype.slicing_ = function() {
 	    this._children[xyz].modified(true);
 	} 
 	else{
-	    window.console.log('children data ALREADY LOADED');
+	    //window.console.log('children data ALREADY LOADED');
 	}
 	// DONE RESLICING!
 

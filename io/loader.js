@@ -156,7 +156,7 @@ X.loader.prototype.addProgress = function(value) {
  */
 X.loader.prototype.checkFileFormat = function(container) {
 
-    window.console.log('X.loader.checkFileFormat()');
+    //window.console.log('X.loader.checkFileFormat()');
 
     // get the associated file of the object
     var filepath = container._file._path;
@@ -196,7 +196,7 @@ X.loader.prototype.checkFileFormat = function(container) {
  */
 X.loader.prototype.load = function(container, object) {
 
-    window.console.log('X.loader.load()');
+    //window.console.log('X.loader.load()');
 
     if (!container || !object) {
 
@@ -222,7 +222,7 @@ X.loader.prototype.load = function(container, object) {
 
     if (container._filedata != null) {
 
-	window.console.log('X.loader.load() - raw file data present');
+	//window.console.log('X.loader.load() - raw file data present');
 
 	// we have raw file data attached and therefor can skip the loading
 	this.parse(null, container, object);
@@ -236,7 +236,7 @@ X.loader.prototype.load = function(container, object) {
     // this works for binary and for ascii files
     var request = new XMLHttpRequest();
 
-    window.console.log('X.loader.load() - running XMLHttpRequest');
+    //window.console.log('X.loader.load() - running XMLHttpRequest');
 
     // listen to abort events
     goog.events.listen(request, 'abort', this.failed.bind(this, request,
@@ -272,7 +272,7 @@ X.loader.prototype.load = function(container, object) {
  */
 X.loader.prototype.parse = function(request, container, object) {
 
-    window.console.log('X.loader.parse!!()');
+    //window.console.log('X.loader.parse!!()');
     
     // downloading completed, add progress
     this.addProgress(1.0);
@@ -309,8 +309,8 @@ X.loader.prototype.parse = function(request, container, object) {
 	// call the parse function and pass in the container, the object and the
 	// data stream and some additional value
 	
-	window.console.log('X.loader() _parser.parse()');
-	window.console.log(_parser);
+	//window.console.log('X.loader() _parser.parse()');
+	//window.console.log(_parser);
 
 	_parser.parse(container, object, _data, flags);
 
@@ -329,7 +329,7 @@ X.loader.prototype.parse = function(request, container, object) {
  */
 X.loader.prototype.complete = function(event) {
 
-    window.console.log('X.loader.complete()');
+    //window.console.log('X.loader.complete()');
 
     // parsing completed, add progress
     this.addProgress(1.0);
@@ -338,7 +338,7 @@ X.loader.prototype.complete = function(event) {
     // something
     setTimeout(function() {
 
-	window.console.log('X.loader.complete() - setTimeout..:');
+	//window.console.log('X.loader.complete() - setTimeout..:');
 
 	var container = event._container;
 	var object = event._object;
@@ -355,12 +355,12 @@ X.loader.prototype.complete = function(event) {
 	// mark the loading job as completed
 	this._jobs.set(container._id, true);
 
-	window.console.log('X.loader.complete() - this._jobs:');
-	window.console.log(this._jobs);
+	//window.console.log('X.loader.complete() - this._jobs:');
+	//window.console.log(this._jobs);
 
     }.bind(this), 100);
 
-    window.console.log('X.loader.complete() - END');
+    //window.console.log('X.loader.complete() - END');
 
 };
 

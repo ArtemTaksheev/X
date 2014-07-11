@@ -50,7 +50,7 @@ X.parserNII = function() {
 
     //
     // call the standard constructor of X.parser
-    window.console.log('X.parserNII()');
+    //window.console.log('X.parserNII()');
     goog.base(this);
     
     //
@@ -72,7 +72,7 @@ goog.inherits(X.parserNII, X.parser);
  */
 X.parserNII.prototype.parse = function(container, object, data, flag) {
     
-    window.console.log('X.parserNII.parse()');
+    //window.console.log('X.parserNII.parse()');
 
     var _data = data;
     
@@ -218,7 +218,7 @@ X.parserNII.prototype.parse = function(container, object, data, flag) {
     }
     else {
 
-	window.console.log('UNKNOWN METHOD IN PARSER NII');
+	//window.console.log('UNKNOWN METHOD IN PARSER NII');
 
     }
     
@@ -261,7 +261,7 @@ X.parserNII.prototype.parse = function(container, object, data, flag) {
     object._image = this.reslice(object);
     
 
-    window.console.log('X.parserNII.parse() - END');
+    //window.console.log('X.parserNII.parse() - END');
 
     // the object should be set up here, so let's fire a modified event
     var modifiedEvent = new X.event.ModifiedEvent();
@@ -281,7 +281,7 @@ X.parserNII.prototype.parse = function(container, object, data, flag) {
  */
 X.parserNII.prototype.parseStream = function(data) {
 
-    window.console.log('X.parserNII.parseStream()');
+    //window.console.log('X.parserNII.parseStream()');
 
     // attach the given data
     this._data = data;
@@ -445,7 +445,7 @@ X.parserNII.prototype.parseStream = function(data) {
     MRI.min = min_max[0];
     MRI.max = min_max[1];
     
-    window.console.log('X.parserNII.parseStream() - END');
+    //window.console.log('X.parserNII.parseStream() - END');
 
     return MRI;
     

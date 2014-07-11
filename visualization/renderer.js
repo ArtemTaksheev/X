@@ -867,7 +867,7 @@ X.renderer.prototype.init = function(_contextName) {
  */
 X.renderer.prototype.add = function(object) {
 
-    window.console.log('X.renderer.add');
+    //window.console.log('X.renderer.add');
 
     // for constructable objects (e.g. cube, sphere, cylinder), we call the
     // modified() function to generate the CSG representations
@@ -1066,7 +1066,7 @@ X.renderer.prototype.generateTree_ = function(object, level) {
 
     _output += object._id;
 
-    window.console.log(_output);
+    //window.console.log(_output);
 
     if (object._children.length > 0) {
 
@@ -1129,7 +1129,7 @@ X.renderer.prototype.render = function() {
     //
     if (!this._loader.completed()) {
 
-	window.console.log('X.renderer.js.render() - loader not ready');
+	//window.console.log('X.renderer.js.render() - loader not ready');
 
 	// we are not ready yet.. the loader is still working;
 

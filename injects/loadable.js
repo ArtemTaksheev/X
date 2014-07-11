@@ -71,7 +71,7 @@ X.loadable = function() {
  */
 X.loadable.prototype.__defineSetter__('file', function(filepath) {
 
-    window.console.log('X.loadable.file_setter');
+    //window.console.log('X.loadable.file_setter');
 
     if (!goog.isDefAndNotNull(filepath) ||
 	(goog.isArray(filepath) && filepath.length == 0)) {
@@ -88,7 +88,7 @@ X.loadable.prototype.__defineSetter__('file', function(filepath) {
 
 	if (filepath.length == 1) {
 
-	    window.console.log('X.loadable.file_setter - file array but only 1');
+	    //window.console.log('X.loadable.file_setter - file array but only 1');
 
 	    // if this is only one file, proceed as usual
 	    this._file = new X.file(filepath[0]);
@@ -100,7 +100,7 @@ X.loadable.prototype.__defineSetter__('file', function(filepath) {
 	// create an X.file object for each filepath
 	var _file_array = goog.array.map(filepath, function(v) {
 
-	    window.console.log('X.loadable.file_setter - file array, multiple files');
+	    //window.console.log('X.loadable.file_setter - file array, multiple files');
 
 	    var _v = new X.volume();
 	    _v._file = new X.file(v);
@@ -113,7 +113,7 @@ X.loadable.prototype.__defineSetter__('file', function(filepath) {
 
     } else {
 
-	window.console.log('X.loadable.file_setter - new file');
+	//window.console.log('X.loadable.file_setter - new file');
 
 	this._file = new X.file(filepath);
 
