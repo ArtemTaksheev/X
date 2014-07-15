@@ -1148,7 +1148,7 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
  */
 X.parser.prototype.reslice = function(object) {
 
-    //window.console.log('X.parser.reslice()');
+    window.console.log('X.parser.reslice()');
     
     // ------------------------------------------
     // CREATE IJK VOLUMES

@@ -359,34 +359,6 @@ X.volume.prototype.create_ = function(_info) {
 };
 
 
-X.volume.prototype.clearChildren = function() {
-
-    /*
-    // remove all old children
-    this._children.length = 0;
-    this._slicesX._children.length = 0;
-    this._slicesY._children.length = 0;
-    this._slicesZ._children.length = 0;
-
-    // add the new children
-    this._children.push(this._slicesX);
-    this._children.push(this._slicesY);
-    this._children.push(this._slicesZ);
-*/
-
-    /*
-    // setup image specific information
-    this._RASOrigin = _info.RASOrigin;
-    this._RASSpacing = _info.RASSpacing;
-    this._RASDimensions = _info.RASDimensions;
-    this._IJKToRAS = _info.IJKToRAS;
-    this._RASToIJK = _info.RASToIJK;
-    this._max = _info.max;
-    this._data = _info.data;
-    this._dirty = true;
-    */
-};
-
 
 
 /**
@@ -397,7 +369,7 @@ X.volume.prototype.clearChildren = function() {
 X.volume.prototype.modified = function(propagateEvent) {
 
 
-    //window.console.log('X.volume.modified()');
+    window.console.log('X.volume.modified()');
 
     // by default, propagate event should be true
     propagateEvent = typeof propagateEvent !== 'undefined' ? propagateEvent
@@ -453,12 +425,14 @@ X.volume.prototype.modified = function(propagateEvent) {
  */
 X.volume.prototype.slicing_ = function() {
 
-    //window.console.log('X.volume.slicing_()');
+    window.console.log('X.volume.slicing_()');
 
     // display the current slices in X,Y and Z direction
     var xyz = 0; // 0 for x, 1 for y, 2 for z
     for (xyz = 0; xyz < 3; xyz++) {
 
+
+	//what type of object is this!?
 	var _child = this._children[xyz];
 	var currentIndex = 0;
 	var oldIndex = 0;
@@ -486,9 +460,19 @@ X.volume.prototype.slicing_ = function() {
 
 	// RESLICE VOLUME IF NECESSARY! - D.B.  - HOW TO RESET THIS?
 
-	if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
+	//window.console.log('CHILDREN:');
+	//window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
+
+	//if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
+	//if(true){
 
 
+	//D.B. - need to find a way to trigger this on reload!
+	if(!goog.isDefAndNotNull(_child._children[parseInt(currentIndex, 10)])){
+
+
+
+	    window.console.log('X.volume.slicing_() : reslicing');
 	    //window.console.log('X.volume.slicing_() - _children[xyz]:');
 	    //window.console.log(this._children[xyz]);
 	    
@@ -1381,7 +1365,57 @@ X.volume.prototype.__defineGetter__('zColor', function() {
  *
  * @public
  */
+
+
+//X.volume.prototype.sliceInfo
+
+
+X.volume.prototype.clearChildren = function(index){
+
+    window.console.log('X.volume.clearChildren()');
+    window.console.log(this._children);
+    window.console.log(this._children[0]);
+    window.console.log(this._children[1]);
+    window.console.log(this._children[2]);
+    window.console.log(this._children.length);
+
+
+    for(var i=0; i<this._children[index]._children.length; i++){
+
+	window.console.log('DELETING');
+
+
+	if(typeof this._children[index]._children[i] != 'undefined'){
+	    
+	    if(this.hasLabelMap) {
+		// add it to create the texture
+		this._labelmap._children[index]._children[i].remove();
+		this._labelmap._children[index]._children[i] = null;
+	    }
+
+	    this._children[index]._children[i].remove();
+	    this._children[index]._children[i] = null;
+	    
+	}
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+/*D.B - IM TRYING TO CALL THIS BUT ITS NOT WORKING*/
+
+
 X.volume.prototype.sliceInfoChanged = function(index){
+
+    window.console.log('X.volume.sliceInfoChanged(' + index + ')');
 
     // Hide slices
     this._children[index]['visible'] = false;
@@ -1389,6 +1423,10 @@ X.volume.prototype.sliceInfoChanged = function(index){
     // delete all textures attached to 1 child
     // for each child
     for(var i=0; i<this._children[index]._children.length; i++){
+
+	window.console.log('DELETING');
+
+
 	if(typeof this._children[index]._children[i] != 'undefined'){
 	    
 	    if(this.hasLabelMap) {

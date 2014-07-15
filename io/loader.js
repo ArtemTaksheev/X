@@ -192,11 +192,11 @@ X.loader.prototype.checkFileFormat = function(container) {
  * @param {!X.base} container The container which has a X.file() attached.
  * @param {!X.object} object The X.object which is the parent of the container
  *          or equals it.
- * @throws {Error} An error, if the given objects were invalid.
+ * @throws {Error} An error, if the given objects were invalid
  */
 X.loader.prototype.load = function(container, object) {
 
-    //window.console.log('X.loader.load()');
+    window.console.log('X.loader.load()');
 
     if (!container || !object) {
 
@@ -222,7 +222,7 @@ X.loader.prototype.load = function(container, object) {
 
     if (container._filedata != null) {
 
-	//window.console.log('X.loader.load() - raw file data present');
+	window.console.log('X.loader.load() - raw file data present');
 
 	// we have raw file data attached and therefor can skip the loading
 	this.parse(null, container, object);
@@ -236,7 +236,7 @@ X.loader.prototype.load = function(container, object) {
     // this works for binary and for ascii files
     var request = new XMLHttpRequest();
 
-    //window.console.log('X.loader.load() - running XMLHttpRequest');
+    window.console.log('X.loader.load() - running XMLHttpRequest');
 
     // listen to abort events
     goog.events.listen(request, 'abort', this.failed.bind(this, request,
@@ -272,7 +272,7 @@ X.loader.prototype.load = function(container, object) {
  */
 X.loader.prototype.parse = function(request, container, object) {
 
-    //window.console.log('X.loader.parse!!()');
+    window.console.log('X.loader.parse!!()');
     
     // downloading completed, add progress
     this.addProgress(1.0);
@@ -329,7 +329,7 @@ X.loader.prototype.parse = function(request, container, object) {
  */
 X.loader.prototype.complete = function(event) {
 
-    //window.console.log('X.loader.complete()');
+    window.console.log('X.loader.complete()');
 
     // parsing completed, add progress
     this.addProgress(1.0);

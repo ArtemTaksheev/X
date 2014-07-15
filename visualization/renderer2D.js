@@ -536,7 +536,7 @@ X.renderer2D.prototype.volumeChildrenIndex_ = function(targetOrientation) {
 
 
 /*CUSTOM FUNC FOR RELOADING THE COLOR TABLE*/
-
+//D.B.
 /*
 X.renderer2D.prototype.resetColorTable = function(object) {
 
@@ -563,12 +563,25 @@ X.renderer2D.prototype.resetColorTable = function(object) {
 */
 
 
+//D.B.
+
+X.renderer2D.prototype.update  = function(object) {
+    //requires the volume to be loaded
+
+    //do both updates get called!?
+
+    this.update_(object);
+};
+
+
+
+
 /**
  * @inheritDoc
  */
 X.renderer2D.prototype.update_ = function(object) {
 
-    //window.console.log('X.renderer2d.update_');
+    window.console.log('X.renderer2d.update_()');
     //window.console.log(object);
 
     // call the update_ method of the superclass
@@ -679,7 +692,7 @@ X.renderer2D.prototype.update_ = function(object) {
     // with one file
     else if (goog.isDefAndNotNull(file) && file._dirty) {
 
-	//window.console.log('X.renderer2d.update_ just one file!');
+	window.console.log('X.renderer2d.update_ just one file!');
 
 	// this object is based on an external file and it is dirty..
 	// start loading..
@@ -947,6 +960,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
  */
 X.renderer2D.prototype.render_ = function(picking, invoked) {
 
+    //D.B.
     //window.console.log('renderer2D.render_()');
 
     // call the render_ method of the superclass
@@ -964,6 +978,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
     }
 
+    //D.B. - picking the actual index for the slice!
+
     var _volume = this._topLevelObjects[0];
     var _currentSlice = null;
     if (this._orientationIndex == 0) {
@@ -979,6 +995,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 	_currentSlice = _volume['indexZ'];
 
     }
+    //window.console.log('renderer2D.render_() : current slice = ' + _currentSlice);
+
 
     //if slice do not exist yet, we have to set slice dimensions
     var _width2 = this._slices[parseInt(_currentSlice, 10)]._iWidth;
@@ -1031,6 +1049,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
     }
 
     // .. here is the current slice
+
+    //D.B.
+    //window.console.log('X.renderer2D.render_() : ' + _currentSlice + ' = ' + parseInt(_currentSlice, 10));
     var _slice = this._slices[parseInt(_currentSlice, 10)];
     var _sliceData = _slice._texture._rawData;
     var _currentLabelMap = _slice._labelmap;
@@ -1082,6 +1103,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 				      this._labelmapShowOnlyColor, 0, 0, 4)));
 
     if (_redraw_required) {
+
+	//D.B. - DRAWS FRAME EVERYTIME INDEX IS CHANGED
+	window.console.log('X.renderer2D.render_() : Redraw required!');
+
 	// update FBs with new size
 	// has to be there, not sure why, too slow to be in main loop?
 	var _frameBuffer = this._frameBuffer;
@@ -1103,7 +1128,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 	    var _label = [0, 0, 0, 0];
 
 	    // grab the pixel intensity -
-	    // IGNORES GBA VALUES!!!!
+	    // D.B. - IGNORES GBA VALUES!!!! sliceData CONTAINS THE DATA....
 	    var _intensity = _sliceData[_index] / 255 * _maxScalarRange;
 	    var _origIntensity = _sliceData[_index];
 
@@ -1402,6 +1427,11 @@ goog.exportSymbol('X.renderer2D.prototype.onResize',
 		  X.renderer2D.prototype.onResize);
 goog.exportSymbol('X.renderer2D.prototype.destroy',
 		  X.renderer2D.prototype.destroy);
+//D.B. - update
+goog.exportSymbol('X.renderer2D.prototype.update',
+		  X.renderer2D.prototype.update);
+
+
 goog.exportSymbol('X.renderer2D.prototype.onSliceNavigation', X.renderer2D.prototype.onSliceNavigation);
 /*
 goog.exportSymbol('X.renderer2D.prototype.resetColorTable', X.renderer2D.prototype.resetColorTable);*/

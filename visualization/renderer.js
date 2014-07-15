@@ -342,6 +342,9 @@ X.renderer.prototype.onProgress = function(event) {
  */
 X.renderer.prototype.onModified = function(event) {
 
+    //D.B.
+    window.console.log('X.renderer.onModified()');
+
     if (goog.isDefAndNotNull(event) && event instanceof X.event.ModifiedEvent) {
 
 	if (!event._object) {
@@ -349,7 +352,9 @@ X.renderer.prototype.onModified = function(event) {
 	    return;
 
 	}
-
+	window.console.log('X.renderer.onModified() : update_()');
+	window.console.log(event._object);
+	
 	this.update_(event._object);
 
     }
@@ -582,7 +587,7 @@ X.renderer.prototype.__defineSetter__('topLevelObjects', function(topLevelObject
 
 });
 
-
+//loader to access this during run time, add color table...
 X.renderer.prototype.__defineGetter__('loader', function() {
 
     return this._loader;
@@ -638,7 +643,7 @@ X.renderer.prototype.__defineSetter__('container', function(container) {
 X.renderer.prototype.resetViewAndRender = function() {
 
     this._camera.reset();
-    // this.render_(false, false);
+    //this.render_(false, false);
 
 };
 
@@ -867,7 +872,7 @@ X.renderer.prototype.init = function(_contextName) {
  */
 X.renderer.prototype.add = function(object) {
 
-    //window.console.log('X.renderer.add');
+    window.console.log('X.renderer.add');
 
     // for constructable objects (e.g. cube, sphere, cylinder), we call the
     // modified() function to generate the CSG representations
@@ -919,6 +924,7 @@ X.renderer.prototype.remove = function(object) {
 };
 
 
+
 /**
  * Configure a displayable object within this renderer. The object can be a
  * newly created one or an existing one. A X.renderer.render() call has to be
@@ -931,7 +937,7 @@ X.renderer.prototype.remove = function(object) {
  */
 X.renderer.prototype.update_ = function(object) {
 
-    //window.console.log('X.renderer.update_');
+    window.console.log('X.renderer.update_');
 
     if (!this._canvas || !this._context) {
 
@@ -1237,7 +1243,7 @@ X.renderer.prototype.onRender = function() {
  * @param {?boolean=} invoked If TRUE, the render counts as invoked and f.e.
  *          statistics are generated.
  * @throws {Error} If anything goes wrong.
- * @protected
+* @protected
  */
 X.renderer.prototype.render_ = function(picking, invoked) {
 
@@ -1252,6 +1258,8 @@ X.renderer.prototype.render_ = function(picking, invoked) {
  * @public
  */
 X.renderer.prototype.destroy = function() {
+
+    window.console.log('X.renderer.destroy()');
 
     // stop the rendering loop
     window.cancelAnimationFrame(this._AnimationFrameID);
