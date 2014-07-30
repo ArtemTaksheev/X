@@ -377,8 +377,11 @@ X.volume.prototype.modified = function(propagateEvent) {
 
     // only do this if we already have children aka. the create_() method was
     // called
-    if (this._children.length > 0) {
+    if (this._children.length > 0) {     
+    //if (true) { 
 
+
+	//VOLUME RENDERING
 	if (this._volumeRendering != this._volumeRenderingOld) {
 
 	    if (!this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -395,14 +398,17 @@ X.volume.prototype.modified = function(propagateEvent) {
 
 	}
 
+	//IN CASE OF NOT VISIBLE
 	if (!this._visible) {
 
 	    return;
 
 	}
 
+	//this.clearChildren(0); //- causes errors that I cannot debug because of retarded compilation 
 	this.slicing_();
 
+	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
 	    // prepare volume rendering
 	    this.volumeRendering_(this._volumeRenderingDirection);
@@ -428,11 +434,12 @@ X.volume.prototype.slicing_ = function() {
     window.console.log('X.volume.slicing_()');
 
     // display the current slices in X,Y and Z direction
+    //D.B. - RUNS 3 TIMES, ONCE FOR EACH DIRECTION
     var xyz = 0; // 0 for x, 1 for y, 2 for z
     for (xyz = 0; xyz < 3; xyz++) {
 
 
-	//what type of object is this!?
+	//D.B. - what type of object is this!? - slices!
 	var _child = this._children[xyz];
 	var currentIndex = 0;
 	var oldIndex = 0;
@@ -460,25 +467,23 @@ X.volume.prototype.slicing_ = function() {
 
 	// RESLICE VOLUME IF NECESSARY! - D.B.  - HOW TO RESET THIS?
 
-	//window.console.log('CHILDREN:');
-	//window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
+	window.console.log('CHILDREN_index = ' + parseInt(currentIndex, 10));
+	window.console.log(_child._children[parseInt(currentIndex, 10)]);
 
 	//if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
 	//if(true){
 
 
 	//D.B. - need to find a way to trigger this on reload!
+	//BASICALLY SAYS IF THERE'S NO PRELOADED SLICE FOR THIS INDEX, CREATE ONE
 	if(!goog.isDefAndNotNull(_child._children[parseInt(currentIndex, 10)])){
 
-
-
-	    window.console.log('X.volume.slicing_() : reslicing');
+	    window.console.log('X.volume.slicing_() : SLICE NOT FOUND');
 	    //window.console.log('X.volume.slicing_() - _children[xyz]:');
 	    //window.console.log(this._children[xyz]);
 	    
 	    //window.console.log('X.volume.slicing_() - _children[xyz]._children[...]:');
 	    //window.console.log(this._children[xyz]._children[parseInt(currentIndex, 10)]);
-
 
 
 	    // GO reslice!
@@ -515,22 +520,27 @@ X.volume.prototype.slicing_ = function() {
 		_slice._labelmap = this._labelmap._children[xyz]._children[parseInt(currentIndex, 10)]._texture;
 	    }
 
+	    //SET THE CURRENT SLICE INTO THE BUFFER
 	    _child._children[parseInt(currentIndex, 10)] = _slice;
 
 	    // add it to renderer!
 	    this._children[xyz].modified(true);
 	} 
 	else{
+	    window.console.log('X.volume.slicing_() - SLICE ALREADY PRESENT');
 	    //window.console.log('children data ALREADY LOADED');
 	}
 	// DONE RESLICING!
 
 	// hide the old slice
 	var _oldSlice = _child._children[parseInt(oldIndex, 10)];
-	if(!this._volumeRendering){
 
-	    _oldSlice['visible'] = false;
-
+	if(_oldSlice){
+	    if(!this._volumeRendering){
+		
+		_oldSlice['visible'] = false;
+		
+	    }
 	}
 
 	// show the current slice and also show the borders if they exist by
@@ -1373,10 +1383,10 @@ X.volume.prototype.__defineGetter__('zColor', function() {
 X.volume.prototype.clearChildren = function(index){
 
     window.console.log('X.volume.clearChildren()');
-    window.console.log(this._children);
-    window.console.log(this._children[0]);
-    window.console.log(this._children[1]);
-    window.console.log(this._children[2]);
+    //window.console.log(this._children);
+    //window.console.log(this._children[0]);
+    //window.console.log(this._children[1]);
+    //window.console.log(this._children[2]);
     window.console.log(this._children.length);
 
 
@@ -1392,12 +1402,13 @@ X.volume.prototype.clearChildren = function(index){
 		this._labelmap._children[index]._children[i].remove();
 		this._labelmap._children[index]._children[i] = null;
 	    }
-
-	    this._children[index]._children[i].remove();
-	    this._children[index]._children[i] = null;
-	    
+	    if(this._children[index]._children[i]){
+		this._children[index]._children[i].remove();
+		this._children[index]._children[i] = null;
+	    }
 	}
     }
+    window.console.log(this._children.length);
 };
 
 
