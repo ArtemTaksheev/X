@@ -89,6 +89,8 @@ X.loader = function() {
      */
     this._progress = 0;
 
+    this._modified = false;
+
 };
 // inherit from X.base
 goog.inherits(X.loader, X.base);
@@ -272,7 +274,7 @@ X.loader.prototype.load = function(container, object) {
  */
 X.loader.prototype.parse = function(request, container, object) {
 
-    window.console.log('X.loader.parse!!()');
+    window.console.log('X.loader.parse()');
     
     // downloading completed, add progress
     this.addProgress(1.0);
@@ -280,6 +282,8 @@ X.loader.prototype.parse = function(request, container, object) {
     // we use a timeout here to let the progress bar be able to breath and show
     // something
     setTimeout(function() {
+
+	window.console.log('X.loader.parse() - setTimeout');
 
 	// check the file format which returns the filepath, extension and the
 	// parser
@@ -289,6 +293,9 @@ X.loader.prototype.parse = function(request, container, object) {
 
 	// instantiate the parser
 	var _parser = new parser;
+
+	//window.console.log('X.loader.parse!!() - PARSER:');
+	//window.console.log(parser);
 
 	// listen once to a modified event
 	goog.events.listenOnce(_parser, X.event.events.MODIFIED, this.complete
@@ -334,11 +341,21 @@ X.loader.prototype.complete = function(event) {
     // parsing completed, add progress
     this.addProgress(1.0);
 
+    //set volume _modified to be true
+
+    //window.console.log(event._container);
+    //window.console.log(event._object);
+    //event._object.modified();
+
+
     // we use a timeout here to let the progress bar be able to breath and show
     // something
+
+    //D.B. - IS THIS DOING ANYTHING - NO TRACE OF PRINT STATEMENTS IN CONSOLE
+
     setTimeout(function() {
 
-	//window.console.log('X.loader.complete() - setTimeout..:');
+	window.console.log('X.loader.complete() - setTimeout..:');
 
 	var container = event._container;
 	var object = event._object;
@@ -349,18 +366,18 @@ X.loader.prototype.complete = function(event) {
 	// .. but mark the container as dirty since its content changed
 	container._dirty = true;
 
+	window.console.log(object);
+
 	// fire the modified event on the object
 	object.modified();
 
 	// mark the loading job as completed
 	this._jobs.set(container._id, true);
 
-	//window.console.log('X.loader.complete() - this._jobs:');
-	//window.console.log(this._jobs);
 
     }.bind(this), 100);
 
-    //window.console.log('X.loader.complete() - END');
+    window.console.log('X.loader.complete() - END');
 
 };
 

@@ -72,7 +72,7 @@ goog.inherits(X.parserNII, X.parser);
  */
 X.parserNII.prototype.parse = function(container, object, data, flag) {
     
-    //window.console.log('X.parserNII.parse()');
+    window.console.log('X.parserNII.parse()');
 
     var _data = data;
     

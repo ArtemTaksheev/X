@@ -352,8 +352,9 @@ X.renderer.prototype.onModified = function(event) {
 	    return;
 
 	}
-	window.console.log('X.renderer.onModified() : update_()');
-	window.console.log(event._object);
+	//window.console.log('X.renderer.onModified() : update_()');
+	//window.console.log(event._object);
+	//event._object._modified = true;
 	
 	this.update_(event._object);
 
@@ -872,7 +873,7 @@ X.renderer.prototype.init = function(_contextName) {
  */
 X.renderer.prototype.add = function(object) {
 
-    window.console.log('X.renderer.add');
+    window.console.log('X.renderer.add()');
 
     // for constructable objects (e.g. cube, sphere, cylinder), we call the
     // modified() function to generate the CSG representations

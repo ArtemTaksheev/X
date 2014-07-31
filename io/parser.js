@@ -787,7 +787,7 @@ X.parser.xyBBox = function(_solutionsXY){
  */
 X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, _IJKVolume, object, hasLabelMap, colorTable){
 
-    //window.console.log('X.parser.reslice2()');
+    window.console.log('X.parser.reslice2()');
 
     var sliceXY = new X.slice();
 

@@ -68,6 +68,8 @@ goog.inherits(X.parserLUT, X.parser);
  */
 X.parserLUT.prototype.parse = function(container, object, data, flag) {
 
+    window.console.log('X.parserLUT.parse()');
+
   X.TIMER(this._classname + '.parse');
   
   var colortable = container;
@@ -137,7 +139,9 @@ X.parserLUT.prototype.parse = function(container, object, data, flag) {
     }
     
   }
-  
+    //D.B - FORCE THE RESLICE HERE!
+    //object._image = this.reslice(object);
+
   X.TIMERSTOP(this._classname + '.parse');
   
   // the object should be set up here, so let's fire a modified event

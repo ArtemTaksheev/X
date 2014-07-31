@@ -272,6 +272,11 @@ X.volume = function(volume) {
      */
     this._data = null;
 
+
+    //flag for renderer to see if it has been edited
+    this._modified = false;
+
+
     // inject functionality
     inject(this, new X.loadable()); // this object is loadable from a file
     inject(this, new X.thresholdable()); // this object is thresholdable
@@ -406,7 +411,11 @@ X.volume.prototype.modified = function(propagateEvent) {
 	}
 
 	//this.clearChildren(0); //- causes errors that I cannot debug because of retarded compilation 
+
+
 	this.slicing_();
+
+	this._modified = true;
 
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -467,8 +476,8 @@ X.volume.prototype.slicing_ = function() {
 
 	// RESLICE VOLUME IF NECESSARY! - D.B.  - HOW TO RESET THIS?
 
-	window.console.log('CHILDREN_index = ' + parseInt(currentIndex, 10));
-	window.console.log(_child._children[parseInt(currentIndex, 10)]);
+	//window.console.log('CHILDREN_index = ' + parseInt(currentIndex, 10));
+	//window.console.log(_child._children[parseInt(currentIndex, 10)]);
 
 	//if(!goog.isDefAndNotNull(this._children[xyz]._children[parseInt(currentIndex, 10)])){
 	//if(true){
@@ -476,6 +485,7 @@ X.volume.prototype.slicing_ = function() {
 
 	//D.B. - need to find a way to trigger this on reload!
 	//BASICALLY SAYS IF THERE'S NO PRELOADED SLICE FOR THIS INDEX, CREATE ONE
+	//can clear this with clearChildren()
 	if(!goog.isDefAndNotNull(_child._children[parseInt(currentIndex, 10)])){
 
 	    window.console.log('X.volume.slicing_() : SLICE NOT FOUND');
@@ -1409,6 +1419,8 @@ X.volume.prototype.clearChildren = function(index){
 	}
     }
     window.console.log(this._children.length);
+
+    //this.modified();
 };
 
 
