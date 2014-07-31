@@ -29,3 +29,7 @@ xtk.js
 
 # nfs
 *.nfs*
+
+*.js#
+
+io/.#parserNII.js

@@ -364,11 +364,12 @@ X.loader.prototype.complete = function(event) {
 	container._file._dirty = false;
 
 	// .. but mark the container as dirty since its content changed
-	container._dirty = true;
+	container._dirty = true;  // D.B. WHAT IS THIS DIRTY THING BEING USED FOR?
 
-	window.console.log(object);
+	//window.console.log(object);
 
 	// fire the modified event on the object
+	// D.B. - OBJECT IS THE VOLUME IN THIS CASE
 	object.modified();
 
 	// mark the loading job as completed

@@ -253,6 +253,9 @@ X.renderer.prototype.onComputing = function(event) {
  */
 X.renderer.prototype.onComputingEnd = function(event) {
 
+    //D.B.
+    window.console.log('X.renderer.onComputingEnd()');
+
    // only do the following if the progressBar was not turned off
     if (this._config['PROGRESSBAR_ENABLED']) {
 

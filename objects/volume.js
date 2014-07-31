@@ -383,7 +383,7 @@ X.volume.prototype.modified = function(propagateEvent) {
     // only do this if we already have children aka. the create_() method was
     // called
     if (this._children.length > 0) {     
-    //if (true) { 
+	//if (true) { 
 
 
 	//VOLUME RENDERING
@@ -415,7 +415,8 @@ X.volume.prototype.modified = function(propagateEvent) {
 
 	this.slicing_();
 
-	this._modified = true;
+	//D.B. - trying to use this as a flag for redrawing
+	//this._modified = true;
 
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -534,6 +535,13 @@ X.volume.prototype.slicing_ = function() {
 	    _child._children[parseInt(currentIndex, 10)] = _slice;
 
 	    // add it to renderer!
+	    //this._children = array of length 3, 1 for each direction
+	    // DOES THIS HAVE ANYTHING TO DO WITH RELOAD ISSUE?
+	    window.console.log('CHILDREN');
+	    window.console.log(this._children);
+
+	    //seems not entirely to be necessary... 
+	    //causes update_ function in renderer.js to repeat alot of times...?
 	    this._children[xyz].modified(true);
 	} 
 	else{

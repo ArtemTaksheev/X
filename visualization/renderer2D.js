@@ -570,7 +570,7 @@ X.renderer2D.prototype.resetColorTable = function(object) {
 
 
 //D.B.
-
+/*
 X.renderer2D.prototype.update  = function(object) {
     //requires the volume to be loaded
     window.console.log('X.renderer2d.update()');
@@ -579,7 +579,7 @@ X.renderer2D.prototype.update  = function(object) {
 
     this.update_(object);
 };
-
+*/
 
 
 
