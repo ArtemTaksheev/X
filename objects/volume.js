@@ -716,6 +716,9 @@ X.volume.prototype.__defineGetter__('visible', function() {
  */
 X.volume.prototype.__defineSetter__('visible', function(visible) {
 
+    window.console.log('X.volume.visible - SETTER');
+
+
     if (visible) {
 
 	// here we have to only set specific children to visible using
@@ -877,6 +880,8 @@ X.volume.prototype.__defineGetter__('indexX', function() {
  */
 X.volume.prototype.__defineSetter__('indexX', function(indexX) {
 
+    window.console.log('X.volume.indexX - SETTER');
+
     if (goog.isNumber(indexX) && indexX >= 0
 	&& indexX < this._slicesX._children.length) {
 
@@ -912,6 +917,8 @@ X.volume.prototype.__defineGetter__('indexY', function() {
  */
 X.volume.prototype.__defineSetter__('indexY', function(indexY) {
 
+    window.console.log('X.volume.indexY - SETTER');
+
     if (goog.isNumber(indexY) && indexY >= 0
 	&& indexY < this._slicesY._children.length) {
 
@@ -946,6 +953,8 @@ X.volume.prototype.__defineGetter__('indexZ', function() {
  * @public
  */
 X.volume.prototype.__defineSetter__('indexZ', function(indexZ) {
+
+    window.console.log('X.volume.indexZ - SETTER');
 
     if (goog.isNumber(indexZ) && indexZ >= 0
 	&& indexZ < this._slicesZ._children.length) {
