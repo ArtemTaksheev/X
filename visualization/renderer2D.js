@@ -153,6 +153,8 @@ X.renderer2D = function() {
      */
     this._currentSlice = -1;
 
+    this._currentSliceId = -1;
+
     /**
      * The buffer of the current lower threshold.
      *
@@ -1026,6 +1028,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		this._sliceWidth = _width2;
 		this._sliceHeight = _height2;
 
+		//window.console.log('renderer2D.render_() : current sliceWidth = ' + this._sliceWidth);
+
 		//
 		// grab the camera settings
 
@@ -1068,9 +1072,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 		// .. here is the current slice
 
-		//D.B.
-		//window.console.log('X.renderer2D.render_() : ' + _currentSlice + ' = ' + parseInt(_currentSlice, 10));
+
 		var _slice = this._slices[parseInt(_currentSlice, 10)];
+
 		var _sliceData = _slice._texture._rawData;
 		var _currentLabelMap = _slice._labelmap;
 		var _labelData = null;
@@ -1082,6 +1086,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 		var _sliceWidth = this._sliceWidth;
 		var _sliceHeight = this._sliceHeight;
+
+		//D.B.
+		var _currentSliceId = _slice._id;
+
 
 		//
 		// FRAME BUFFERING
@@ -1112,7 +1120,11 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		// - if the threshold has changed
 		// - if the window/level has changed
 		// - the labelmap show only color has changed
-		var _redraw_required = (this._modified != _modified ||
+		// D.B. - if currentSliceId has changed, hammy way of reloading after 
+		// colorTable lookup, chance of failure (1% due to matching id's after
+		// reload)!?
+
+		var _redraw_required = (this._currentSliceId != _currentSliceId ||
 					this._currentSlice != _currentSlice ||
 					this._lowerThreshold != _lowerThreshold ||
 					this._upperThreshold != _upperThreshold ||
@@ -1126,6 +1138,10 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 		    //D.B. - DRAWS FRAME EVERYTIME INDEX IS CHANGED
 		    window.console.log('X.renderer2D.render_() : Redraw required!');
+
+		    if (this._currentSlice != _currentSlice)
+			window.console.log('X.renderer2D.render_(): Index changed');
+
 
 		    if(_modified){
 			window.console.log('X.volume.render_() - setting _volume._modified back to FALSE');
@@ -1285,6 +1301,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    this._upperThreshold = _upperThreshold;
 		    this._windowLow = _windowLow;
 		    this._windowHigh = _windowHigh;
+		    //D.B.
+		    this._currentSliceId = _currentSliceId;
 
 		    if (_currentLabelMap) {
 

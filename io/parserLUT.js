@@ -140,7 +140,7 @@ X.parserLUT.prototype.parse = function(container, object, data, flag) {
     
   }
     //D.B - FORCE THE RESLICE HERE!
-    //object._image = this.reslice(object);
+    object._image = this.reslice(object);
 
   X.TIMERSTOP(this._classname + '.parse');
   
