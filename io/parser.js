@@ -1228,6 +1228,11 @@ X.parser.prototype.reslice = function(object) {
 
     var _slice = X.parser.reslice2(_sliceOrigin, object._childrenInfo[0]._sliceXYSpacing, object._childrenInfo[0]._sliceNormal, object._childrenInfo[0]._color, object._BBox, object._IJKVolume, object, object.hasLabelMap, object._colorTable);
     
+
+    //D.B.
+    window.console.log('X.parser.reslice() - new X slice id:');
+    window.console.log(_slice._id);
+    
     if (object.hasLabelMap) {
 	// if this object has a labelmap,
 	// we have it loaded at this point (for sure)
@@ -1282,6 +1287,10 @@ X.parser.prototype.reslice = function(object) {
 	_slice._labelmap = object._labelmap._children[1]._children[Math.floor(object._childrenInfo[1]._nb/2)]._texture;
     }
     
+    //D.B.
+    window.console.log('X.parser.reslice() - new Y slice id:');
+    window.console.log(_slice._id);
+
     object._children[1]._children[Math.floor(object._childrenInfo[1]._nb/2)] = _slice;
     
     object._indexY = Math.floor(object._childrenInfo[1]._nb/2);
@@ -1328,6 +1337,10 @@ X.parser.prototype.reslice = function(object) {
 	_slice._labelmap = object._labelmap._children[2]._children[Math.floor(object._childrenInfo[2]._nb/2)]._texture;
     }
     
+    //D.B.
+    window.console.log('X.parser.reslice() - new Z slice id:');
+    window.console.log(_slice._id);
+
     object._children[2]._children[Math.floor(object._childrenInfo[2]._nb/2)] = _slice;
     
     object._indexZ = Math.floor(object._childrenInfo[2]._nb/2);

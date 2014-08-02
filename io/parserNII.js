@@ -259,6 +259,7 @@ X.parserNII.prototype.parse = function(container, object, data, flag) {
     
     // re-slice the data according each direction.
     object._image = this.reslice(object);
+    window.console.log(object);
     
 
     //window.console.log('X.parserNII.parse() - END');

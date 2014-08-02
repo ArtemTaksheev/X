@@ -572,7 +572,7 @@ X.renderer2D.prototype.resetColorTable = function(object) {
 
 
 //D.B.
-/*
+
 X.renderer2D.prototype.update  = function(object) {
     //requires the volume to be loaded
     window.console.log('X.renderer2d.update()');
@@ -581,7 +581,7 @@ X.renderer2D.prototype.update  = function(object) {
 
     this.update_(object);
 };
-*/
+
 
 
 
@@ -590,7 +590,7 @@ X.renderer2D.prototype.update  = function(object) {
  */
 X.renderer2D.prototype.update_ = function(object) {
 
-    window.console.log('X.renderer2d.update_()');
+    window.console.log('X.renderer2d.update_() - ' + this.orientation);
     //window.console.log(object);
 
     // call the update_ method of the superclass
@@ -689,6 +689,7 @@ X.renderer2D.prototype.update_ = function(object) {
 
 	} else if (existed && !object._dirty) {
 
+	    window.console.log('ALREADY PARSED VOLUME');
 	    // already parsed the volume
 	    return;
 
@@ -710,7 +711,14 @@ X.renderer2D.prototype.update_ = function(object) {
 	return;
 
     }
+    //D.B. - just checking... so the _dirty flag is being used to check...
+    else if (!file._dirty) {
 
+	    window.console.log('ALREADY PARSED VOLUME');
+	    // already parsed the volume
+
+
+	}
     //
     // at this point the orientation of this renderer might have changed so we
     // should recalculate all the cached values
@@ -1124,6 +1132,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		// colorTable lookup, chance of failure (1% due to matching id's after
 		// reload)!?
 
+		//PROBLEM HERE - ONLY X SLICE GETS UPDATED!
+		//window.console.log(this._currentSliceId + ' , ' + _currentSliceId);
+
 		var _redraw_required = (this._currentSliceId != _currentSliceId ||
 					this._currentSlice != _currentSlice ||
 					this._lowerThreshold != _lowerThreshold ||
@@ -1134,19 +1145,16 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 					 .compare(_labelmapShowOnlyColor, 
 						  this._labelmapShowOnlyColor, 0, 0, 4)));
 
-		if (_redraw_required) {
+		if (_redraw_required){
+		    //window.console.log(this._currentSliceId);
+		//else{
 
-		    //D.B. - DRAWS FRAME EVERYTIME INDEX IS CHANGED
-		    window.console.log('X.renderer2D.render_() : Redraw required!');
+		    //D.B.
 
-		    if (this._currentSlice != _currentSlice)
-			window.console.log('X.renderer2D.render_(): Index changed');
+		    window.console.log('renderer2D.render_() - ' + this.orientation + ' - REDRAW REQUIRED');
+		    window.console.log('from ' + this._currentSliceId + ' to ' + _currentSliceId);
 
 
-		    if(_modified){
-			window.console.log('X.volume.render_() - setting _volume._modified back to FALSE');
-			_volume._modified = false;
-		    }
 
 		    // update FBs with new size
 		    // has to be there, not sure why, too slow to be in main loop?

@@ -383,8 +383,6 @@ X.volume.prototype.modified = function(propagateEvent) {
     // only do this if we already have children aka. the create_() method was
     // called
     if (this._children.length > 0) {     
-	//if (true) { 
-
 
 	//VOLUME RENDERING
 	if (this._volumeRendering != this._volumeRenderingOld) {
@@ -426,9 +424,13 @@ X.volume.prototype.modified = function(propagateEvent) {
 	}
     }
 
-    // call the superclass' modified method
+    // call the superclass' modified method - HOW DOES THIS WORK!????
+
+
     if (propagateEvent) {
 	// but only if propagateEvent is not turned off
+	window.console.log('propagating event');
+
 	goog.base(this, 'modified');
     }
 

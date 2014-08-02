@@ -137,10 +137,11 @@ X.parserLUT.prototype.parse = function(container, object, data, flag) {
       
 
     }
-    
+
   }
-    //D.B - FORCE THE RESLICE HERE!
+    //D.B - FORCE THE RESLICE HERE! - seems to cause funkiness with different viewers
     object._image = this.reslice(object);
+    window.console.log(object);
 
   X.TIMERSTOP(this._classname + '.parse');
   

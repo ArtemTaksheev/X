@@ -346,7 +346,9 @@ X.renderer.prototype.onProgress = function(event) {
 X.renderer.prototype.onModified = function(event) {
 
     //D.B.
-    window.console.log('X.renderer.onModified()');
+    window.console.log('X.renderer.onModified() - ' + this.orientation);
+    window.console.log(event);
+
 
     if (goog.isDefAndNotNull(event) && event instanceof X.event.ModifiedEvent) {
 
@@ -356,7 +358,6 @@ X.renderer.prototype.onModified = function(event) {
 
 	}
 	//window.console.log('X.renderer.onModified() : update_()');
-	//window.console.log(event._object);
 	//event._object._modified = true;
 	
 	this.update_(event._object);
