@@ -496,6 +496,8 @@ X.volume.prototype.modified = function(propagateEvent) {
 	//IMPORTANT
 	this.slicing_();
 
+	//this._modified = true;
+
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
 	    // prepare volume rendering
@@ -512,6 +514,7 @@ X.volume.prototype.modified = function(propagateEvent) {
 	goog.base(this, 'modified');
     }
 
+    /*
     //- THIS BREAKS THINGS WHEN CHANGING INDEX
     //force update for all viewers
     if(this._rendererArray){
@@ -519,7 +522,7 @@ X.volume.prototype.modified = function(propagateEvent) {
 	    console.log('UPDATE FROM MODIFIED');
 	    this._rendererArray[i].update(this);
 	}
-    }
+    }*/
 
 };
 

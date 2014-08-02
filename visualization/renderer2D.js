@@ -207,7 +207,7 @@ X.renderer2D = function() {
 
 
     // added this to check state in case of update with colormaps
-    this._modified = false;
+    this._objectModified = false;
 
 };
 // inherit from X.base
@@ -1135,7 +1135,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		//PROBLEM HERE - ONLY X SLICE GETS UPDATED!
 		//window.console.log(this._currentSliceId + ' , ' + _currentSliceId);
 
-		var _redraw_required = (this._currentSliceId != _currentSliceId ||
+		var _redraw_required = (//this._objectModified != _volume._modified ||
+					this._currentSliceId != _currentSliceId ||
 					this._currentSlice != _currentSlice ||
 					this._lowerThreshold != _lowerThreshold ||
 					this._upperThreshold != _upperThreshold ||
@@ -1152,7 +1153,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    //D.B.
 
 		    window.console.log('renderer2D.render_() - ' + this.orientation + ' - REDRAW REQUIRED');
-		    window.console.log('from ' + this._currentSliceId + ' to ' + _currentSliceId);
+		    //window.console.log('from ' + this._currentSliceId + ' to ' + _currentSliceId);
 
 
 
@@ -1311,6 +1312,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    this._windowHigh = _windowHigh;
 		    //D.B.
 		    this._currentSliceId = _currentSliceId;
+		    this._objectModified = false;
+		    _volume._modified = false;
+		    
 
 		    if (_currentLabelMap) {
 
