@@ -341,9 +341,7 @@ X.volume.prototype.copy_ = function(volume) {
  */
 X.volume.prototype.setColortable = function(colTableFile, rendererArray) {
 
-    console.log(this.colortable);
-    console.log(this._colortable);
-    console.log(this._colorTable);
+    window.console.log('X.volume.setColorTable()');
 
     if(!this._colortable)
 	this._colortable = new X.colortable();
@@ -356,8 +354,9 @@ X.volume.prototype.setColortable = function(colTableFile, rendererArray) {
     if(this._colortable.file)
 	loader.load(this._colortable, this);
     else{
+	//set colortables to empty
 	this._colortable = null;
-	this._colorTable = null;
+	this._colorTable = null; //cached lookup table
 	loader.load(this, this);
     }
 
@@ -494,10 +493,8 @@ X.volume.prototype.modified = function(propagateEvent) {
 
 	}
 
-	//this.clearChildren(0); //- causes errors that I cannot debug because of retarded compilation 
-
+	//IMPORTANT
 	this.slicing_();
-
 
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -507,11 +504,21 @@ X.volume.prototype.modified = function(propagateEvent) {
 	}
     }
 
+
     if (propagateEvent) {
 	// but only if propagateEvent is not turned off
 	window.console.log('propagating event');
 	
 	goog.base(this, 'modified');
+    }
+
+    //- THIS BREAKS THINGS WHEN CHANGING INDEX
+    //force update for all viewers
+    if(this._rendererArray){
+	for(var i = 0; i < this._rendererArray.length; i++){
+	    console.log('UPDATE FROM MODIFIED');
+	    this._rendererArray[i].update(this);
+	}
     }
 
 };
