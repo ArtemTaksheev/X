@@ -341,11 +341,25 @@ X.volume.prototype.copy_ = function(volume) {
  */
 X.volume.prototype.setColortable = function(colTableFile, rendererArray) {
 
-    this.colortable.file = colTableFile;
+    console.log(this.colortable);
+    console.log(this._colortable);
+    console.log(this._colorTable);
+
+    if(!this._colortable)
+	this._colortable = new X.colortable();
+
+    this._colortable.file = colTableFile;
+    this._rendererArray = rendererArray;
 
     var loader = rendererArray[0].loader;
-    loader.load(this.colortable, this);
-    this._rendererArray = rendererArray;
+
+    if(this._colortable.file)
+	loader.load(this._colortable, this);
+    else{
+	this._colortable = null;
+	this._colorTable = null;
+	loader.load(this, this);
+    }
 
 };
 
@@ -482,8 +496,8 @@ X.volume.prototype.modified = function(propagateEvent) {
 
 	//this.clearChildren(0); //- causes errors that I cannot debug because of retarded compilation 
 
-
 	this.slicing_();
+
 
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -493,13 +507,10 @@ X.volume.prototype.modified = function(propagateEvent) {
 	}
     }
 
-    // call the superclass' modified method - HOW DOES THIS WORK!????
-
-
     if (propagateEvent) {
 	// but only if propagateEvent is not turned off
 	window.console.log('propagating event');
-
+	
 	goog.base(this, 'modified');
     }
 

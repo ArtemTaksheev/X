@@ -235,6 +235,8 @@ X.object.prototype.__defineGetter__('children', function() {
  */
 X.object.prototype.modified = function(propagateEvent) {
 
+    window.console.log('X.object.modified()');
+
     var modifiedEvent = new X.event.ModifiedEvent();
     modifiedEvent._object = this;
     this.dispatchEvent(modifiedEvent);

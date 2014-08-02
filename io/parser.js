@@ -1226,6 +1226,9 @@ X.parser.prototype.reslice = function(object) {
     _sliceOrigin[1] = object._childrenInfo[0]._solutionsLine[0][0][1] + object._childrenInfo[0]._sliceDirection[1]*Math.floor(object._childrenInfo[0]._nb/2);
     _sliceOrigin[2] = object._childrenInfo[0]._solutionsLine[0][0][2] + object._childrenInfo[0]._sliceDirection[2]*Math.floor(object._childrenInfo[0]._nb/2);
 
+    console.log('OBJECT:');
+    console.log(object);
+
     var _slice = X.parser.reslice2(_sliceOrigin, object._childrenInfo[0]._sliceXYSpacing, object._childrenInfo[0]._sliceNormal, object._childrenInfo[0]._color, object._BBox, object._IJKVolume, object, object.hasLabelMap, object._colorTable);
     
 

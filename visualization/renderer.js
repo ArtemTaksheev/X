@@ -960,6 +960,7 @@ X.renderer.prototype.update_ = function(object) {
 
 	if(!goog.events.hasListener(object, X.event.events.MODIFIED)) {
 
+	    //THIS ONLY GETS ADDED ONCE!!! SO FIRST RENDERER IS DOMINANT...
 	    goog.events.listen(object, X.event.events.MODIFIED, this.onModified
 			       .bind(this));
 
