@@ -370,7 +370,14 @@ X.loader.prototype.complete = function(event) {
 
 	// fire the modified event on the object
 	// D.B. - OBJECT IS THE VOLUME IN THIS CASE
-	object.modified();
+
+	
+	if(event._message && event._message == 'colortable'){
+	    window.console.log('COLORTABLE WAS LOADED');	 
+	    object.modifiedColortable();
+	}
+	else
+	    object.modified();
 
 	// mark the loading job as completed
 	this._jobs.set(container._id, true);

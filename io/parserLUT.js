@@ -149,6 +149,7 @@ X.parserLUT.prototype.parse = function(container, object, data, flag) {
   var modifiedEvent = new X.event.ModifiedEvent();
   modifiedEvent._object = object;
   modifiedEvent._container = container;
+    modifiedEvent._message = 'colortable';
   this.dispatchEvent(modifiedEvent);
   
 };

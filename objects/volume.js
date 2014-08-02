@@ -335,10 +335,21 @@ X.volume.prototype.copy_ = function(volume) {
 
 
 /**
- * Create the volume.
+ * D.B. - custom function to set the colorTable
  *
  * @private
  */
+X.volume.prototype.setColortable = function(colTableFile, rendererArray) {
+
+    this.colortable.file = colTableFile;
+
+    var loader = rendererArray[0].loader;
+    loader.load(this.colortable, this);
+    this._rendererArray = rendererArray;
+
+};
+
+
 X.volume.prototype.create_ = function(_info) {
 
     // remove all old children
@@ -363,6 +374,67 @@ X.volume.prototype.create_ = function(_info) {
     this._dirty = true;
 };
 
+
+
+// CUSTOM D.B.
+
+X.volume.prototype.modifiedColortable = function(propagateEvent) {
+
+
+    window.console.log('X.volume.modified()- COLORTABLE');
+
+    // by default, propagate event should be true
+    propagateEvent = typeof propagateEvent !== 'undefined' ? propagateEvent
+	: true;
+
+    // only do this if we already have children aka. the create_() method was
+    // called
+    if (this._children.length > 0) {     
+
+	//VOLUME RENDERING
+	if (this._volumeRendering != this._volumeRenderingOld) {
+
+	    if (!this._volumeRendering && this._volumeRenderingDirection != -1) {
+
+		// hide the volume rendering slices
+		var _child = this._children[this._volumeRenderingDirection];
+		_child['visible'] = false;
+
+	    }
+
+	    // switch from slicing to volume rendering or vice versa
+	    this._dirty = true;
+	    this._volumeRenderingOld = this._volumeRendering;
+
+	}
+
+	//IN CASE OF NOT VISIBLE
+	if (!this._visible) {
+
+	    return;
+
+	}
+
+
+	this.slicing_();
+
+
+	//MORE VOLUME RENDERING
+	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
+	    // prepare volume rendering
+	    this.volumeRendering_(this._volumeRenderingDirection);
+
+	}
+    }
+
+    //removed the propagate event code here..., instead attempt to update the renders
+
+    if(this._rendererArray){
+	for(var i = 0; i < this._rendererArray.length; i++){
+	    this._rendererArray[i].update(this);
+	}
+    }
+};
 
 
 
@@ -412,9 +484,6 @@ X.volume.prototype.modified = function(propagateEvent) {
 
 
 	this.slicing_();
-
-	//D.B. - trying to use this as a flag for redrawing
-	//this._modified = true;
 
 	//MORE VOLUME RENDERING
 	if (this._volumeRendering && this._volumeRenderingDirection != -1) {
@@ -1959,3 +2028,4 @@ goog.exportSymbol('X.volume.prototype.onComputing', X.volume.prototype.onComputi
 goog.exportSymbol('X.volume.prototype.onComputingProgress', X.volume.prototype.onComputingProgress);
 goog.exportSymbol('X.volume.prototype.onComputingEnd', X.volume.prototype.onComputingEnd);
 goog.exportSymbol('X.volume.prototype.clearChildren', X.volume.prototype.clearChildren);
+goog.exportSymbol('X.volume.prototype.setColortable', X.volume.prototype.setColortable);
