@@ -1009,19 +1009,14 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 	    }
 	    else{
 		
+		//DETERMINE WHICH SLICE TO PICK
 		var _currentSlice = null;
 		if (this._orientationIndex == 0) {
-		    
 		    _currentSlice = _volume['indexX'];
-		    
 		} else if (this._orientationIndex == 1) {
-		    
 		    _currentSlice = _volume['indexY'];
-		    
 		} else {
-		    
 		    _currentSlice = _volume['indexZ'];
-		    
 		}
 		//window.console.log('renderer2D.render_() : current slice = ' + _currentSlice);
 		
@@ -1151,11 +1146,8 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		//else{
 
 		    //D.B.
-
 		    window.console.log('renderer2D.render_() - ' + this.orientation + ' - REDRAW REQUIRED');
 		    //window.console.log('from ' + this._currentSliceId + ' to ' + _currentSliceId);
-
-
 
 		    // update FBs with new size
 		    // has to be there, not sure why, too slow to be in main loop?
@@ -1182,11 +1174,30 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 			var _intensity = _sliceData[_index] / 255 * _maxScalarRange;
 			var _origIntensity = _sliceData[_index];
 
-			// apply window/level
+			var _origIntensityR = _sliceData[_index];
+			var _origIntensityG = _sliceData[_index + 1];
+			var _origIntensityB = _sliceData[_index + 2];
+			var _origIntensityA = _sliceData[_index + 3];
+			
+
+			// apply window/level - IMPORTANT TO GET THIS BACK
 			var _fac = _windowHigh - _windowLow;
 			_origIntensity = (_origIntensity / 255 - _windowLow) / _fac;
 			_origIntensity = _origIntensity * 255;
+ 
+			_origIntensityR = (_origIntensityR / 255 - _windowLow) / _fac;
+			_origIntensityR = _origIntensityR * 255;
 
+			_origIntensityG = (_origIntensityG / 255 - _windowLow) / _fac;
+			_origIntensityG = _origIntensityG * 255;
+
+			_origIntensityB = (_origIntensityB / 255 - _windowLow) / _fac;
+			_origIntensityB = _origIntensityB * 255;
+
+			_origIntensityA = (_origIntensityA / 255 - _windowLow) / _fac;
+			_origIntensityA = _origIntensityA * 255;
+
+			
 			// apply thresholding
 			if (_intensity >= _lowerThreshold && _intensity <= _upperThreshold) {
 
@@ -1218,10 +1229,19 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 			      255];
 			    */
 
+			    /*
 			    _color = [_sliceData[_index], 
 				      _sliceData[_index + 1],
 				      _sliceData[_index + 2], 
 				      _sliceData[_index + 3]];
+			    */
+
+			    _color = [_origIntensityR, 
+				      _origIntensityG,
+				      _origIntensityB, 
+				      _origIntensityA];
+
+
 
 
 			    if (_currentLabelMap) {
