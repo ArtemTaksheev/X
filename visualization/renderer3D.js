@@ -405,6 +405,16 @@ X.renderer3D.prototype.init = function() {
 };
 
 
+X.renderer3D.prototype.update  = function(object) {
+    //requires the volume to be loaded
+    window.console.log('X.renderer2d.update()');
+
+    //do both updates get called!?
+
+    this.update_(object);
+};
+
+
 /**
  * Add a pair of shaders to this renderer. The renderer has to be initialized
  * before adding the shaders.
@@ -517,12 +527,47 @@ X.renderer3D.prototype.addShaders = function(shaders) {
 /**
  * @inheritDoc
  */
+X.renderer3D.prototype.setColortable = function(index) {
+
+    window.console.log('X.renderer3D.setColortable(' + index + ')');
+
+    var _volume = this._topLevelObjects[0];
+
+    if (index == 0)
+	this._colArrayCURRENT = this._colArrayDEFAULT;
+    if (index == 1)
+	this._colArrayCURRENT = this._colArrayIDS;
+    else if (index == 2)
+	this._colArrayCURRENT = this._colArrayHEAT;
+
+    console.log(_volume);
+
+    for (var i = 0; i < _volume._children.length; i++){ 
+	for(var j = 0; j < _volume._children[i]._children.length; j++){
+	    console.log('setting to dirty');
+	    if(_volume._children[i]._children[j]){
+		console.log(_volume._children[i]._children[j]);
+		_volume._children[i]._children[j]._texture._dirty = true;
+	    }
+	}
+    }
+
+
+
+    //_volume._texture._dirty = true;
+    this.update_(_volume);
+
+};
+
+/**
+ * @inheritDoc
+ */
 X.renderer3D.prototype.update_ = function(object) {
     
     window.console.log('X.renderer3d.update_()');
     // call the update_ method of the superclass
     goog.base(this, 'update_', object);
-
+    window.console.log('X.renderer3d.update_()...');
     // check if object already existed..
     var existed = false;
 
@@ -548,6 +593,10 @@ X.renderer3D.prototype.update_ = function(object) {
     var labelmap = object._labelmap; // here we access directly since we do not
     // want to create one using the labelmap() singleton accessor
     var scalars = object._scalars; // same direct access policy
+
+
+    console.log('TEXTURE = ');
+    console.log(texture);
 
     //
     // LABEL MAP
@@ -783,34 +832,33 @@ X.renderer3D.prototype.update_ = function(object) {
 	    this._context.bindTexture(this._context.TEXTURE_2D, glTexture);
 	    if (texture._rawData) {
 
-		//var _texture_type = this._context.RGBA;
-		var _texture_type = 6408;
-		console.log
-
-		console.log(this._context);
-		
+		var _texture_type = this._context.RGBA;
+				
 		if (texture._grayscale) {
 		    
-		    console.log('ONE CHANNEL');
 		    // one channel texture
 		    _texture_type = this._context.LUMINANCE;
 		    this._context.pixelStorei(this._context.UNPACK_ALIGNMENT, 1);
 		    
 		}
 
-		console.log('SENDING RAW DATA');
+		var dst = new Uint8Array(texture._rawData);
 
-		var _tmp_rawData = texture._rawData;
-	    
-		
-		for(var i = 0; i < _tmp_rawData.length; i+=4){
-		    _tmp_rawData[i] = _tmp_rawData[i] + 100;
-		    //_tmp_rawData[i+1] = 0;
-		    //_tmp_rawData[i+2] = 100;
+		for(var i = 0; i < dst.length; i+=4){
+
+		    var rIndex = Math.min(texture._rawData[i], this._colArrayCURRENT.length - 1);
+		    var rIndex = Math.max(rIndex, 0);
+
+		    var gIndex = Math.min(texture._rawData[i+1], this._colArrayCURRENT.length - 1);
+		    var gIndex = Math.max(gIndex, 0);
+
+		    var bIndex = Math.min(texture._rawData[i+2], this._colArrayCURRENT.length - 1);
+		    var bIndex = Math.max(bIndex, 0);
+
+		    dst[i] = this._colArrayCURRENT[rIndex][0];
+		    dst[i+1] = this._colArrayCURRENT[gIndex][1];
+		    dst[i+2] = this._colArrayCURRENT[bIndex][2];
 		}
-
-
-
 		// use rawData rather than loading an imagefile
 
 		this._context.texImage2D(this._context.TEXTURE_2D, 
@@ -821,7 +869,7 @@ X.renderer3D.prototype.update_ = function(object) {
 					 0, 
 					 _texture_type, 
 					 this._context.UNSIGNED_BYTE,
-					 _tmp_rawData);
+					 dst);
 		/*
 		this._context.texImage2D(this._context.TEXTURE_2D, 0,
 					 3, texture._rawDataWidth, texture._rawDataHeight,
@@ -2506,3 +2554,8 @@ goog.exportSymbol('X.renderer3D.prototype.resetViewAndRender',
 		  X.renderer3D.prototype.resetViewAndRender);
 goog.exportSymbol('X.renderer3D.prototype.pick', X.renderer3D.prototype.pick);
 goog.exportSymbol('X.renderer3D.prototype.pick3d', X.renderer3D.prototype.pick3d);
+//D.B. - update
+goog.exportSymbol('X.renderer3D.prototype.update',
+		  X.renderer3D.prototype.update);
+goog.exportSymbol('X.renderer3D.prototype.setColortable',
+		  X.renderer3D.prototype.setColortable);
