@@ -534,6 +534,8 @@ X.renderer3D.prototype.update_ = function(object) {
 	existed = true;
 
     }
+    console.log('OBJECT = ');
+    console.log(object);
 
     var id = object._id;
     var points = object._points;
@@ -624,6 +626,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	} else if (!object._dirty) {
 
+	    console.log('ALREADY PARSED THE VOLUME');
 	    // already parsed the volume
 	    return;
 
@@ -664,6 +667,8 @@ X.renderer3D.prototype.update_ = function(object) {
 	var numberOfChildren = children.length;
 	var c = 0;
 
+	console.log('LOOPING THROUGH ' + numberOfChildren + ' CHILDREN');
+
 	for (c = 0; c < numberOfChildren; c++) {
 
 	    this.update_(children[c]);
@@ -676,6 +681,7 @@ X.renderer3D.prototype.update_ = function(object) {
     // empty objects can be used to group objects
     if (!points) {
 
+	console.log('EMPTY OBJECT');
 	object._dirty = false;
 	return;
 
@@ -702,6 +708,8 @@ X.renderer3D.prototype.update_ = function(object) {
 
     // X.TIMER(this._classname + '.update');
 
+    console.log('GO TIME!');
+
     // check if this is an X.slice as part of a X.labelmap
     var isLabelMap = (object instanceof X.slice && object._volume instanceof X.labelmap);
 
@@ -710,6 +718,8 @@ X.renderer3D.prototype.update_ = function(object) {
     //
 
     if (existed && goog.isDefAndNotNull(texture) && texture._dirty) {
+
+	window.console.log('TEXTURE1');
 
 	// this means the object already existed and the texture is dirty
 	// therefore, we delete the old gl buffers
@@ -730,8 +740,11 @@ X.renderer3D.prototype.update_ = function(object) {
     if (goog.isDefAndNotNull(texture)) {
 	// texture associated to this object
 
+	//window.console.log('TEXTURE2');
+
 	if (!existed || texture._dirty) {
 
+	    window.console.log('TEXTURE2');
 	    // the object either did not exist or the texture is dirty, so we
 	    // re-create the gl buffers
 
@@ -745,6 +758,7 @@ X.renderer3D.prototype.update_ = function(object) {
 		throw new Error(m);
 
 	    }
+	    
 
 	    var _flipY = false;
 	    if (texture._rawData) {
@@ -769,21 +783,50 @@ X.renderer3D.prototype.update_ = function(object) {
 	    this._context.bindTexture(this._context.TEXTURE_2D, glTexture);
 	    if (texture._rawData) {
 
-		var _texture_type = this._context.RGBA;
+		//var _texture_type = this._context.RGBA;
+		var _texture_type = 6408;
+		console.log
+
+		console.log(this._context);
 		
 		if (texture._grayscale) {
 		    
+		    console.log('ONE CHANNEL');
 		    // one channel texture
 		    _texture_type = this._context.LUMINANCE;
 		    this._context.pixelStorei(this._context.UNPACK_ALIGNMENT, 1);
 		    
 		}
 
+		console.log('SENDING RAW DATA');
+
+		var _tmp_rawData = texture._rawData;
+	    
+		
+		for(var i = 0; i < _tmp_rawData.length; i+=4){
+		    _tmp_rawData[i] = _tmp_rawData[i] + 100;
+		    //_tmp_rawData[i+1] = 0;
+		    //_tmp_rawData[i+2] = 100;
+		}
+
+
+
 		// use rawData rather than loading an imagefile
+
+		this._context.texImage2D(this._context.TEXTURE_2D, 
+					 0,
+					 _texture_type, 
+					 texture._rawDataWidth, 
+					 texture._rawDataHeight,
+					 0, 
+					 _texture_type, 
+					 this._context.UNSIGNED_BYTE,
+					 _tmp_rawData);
+		/*
 		this._context.texImage2D(this._context.TEXTURE_2D, 0,
-					 _texture_type, texture._rawDataWidth, texture._rawDataHeight,
-					 0, _texture_type, this._context.UNSIGNED_BYTE,
-					 texture._rawData);
+					 3, texture._rawDataWidth, texture._rawDataHeight,
+					 0, 4, this._context.UNSIGNED_BYTE,
+					 _tmp_rawData);*/
 
 	    } else {
 
@@ -830,10 +873,13 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	    this._texturePositionBuffers.set(id, texturePositionBuffer);
 
+	    console.log(texture);
+
 	    texture._dirty = false;
 
 	} else {
-
+	    
+	    window.console.log('TEXTURE3');
 	    // the texture is not dirty and the object already existed, so use the old
 	    // buffer
 	    texturePositionBuffer = this._texturePositionBuffers.get(id);
@@ -880,6 +926,9 @@ X.renderer3D.prototype.update_ = function(object) {
     if (!existed || points._dirty || transform._dirty) {
 	var transformationMatrix = transform._matrix;
 
+
+	console.log('BOUNDING BOX');
+
 	var tMin = X.matrix.multiplyByVector(transformationMatrix, points._minA, points._minB, points._minC);
 	var tMax = X.matrix.multiplyByVector(transformationMatrix, points._maxA, points._maxB, points._maxC);
 
@@ -920,6 +969,8 @@ X.renderer3D.prototype.update_ = function(object) {
 	// this means the object already existed and the points are dirty
 	// therefore, we delete the old gl buffers
 
+	window.console.log('VERTS1');
+
 	// remove old vertex buffer
 	var oldVertexBuffer = this._vertexBuffers.get(id);
 	if (goog.isDefAndNotNull(oldVertexBuffer)) {
@@ -938,6 +989,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
     if (!existed || points._dirty) {
 
+	window.console.log('VERTS2');
 	// the object either did not exist or the points are dirty, so we re-create
 	// the gl buffers and reset the bounding box
 
@@ -956,6 +1008,8 @@ X.renderer3D.prototype.update_ = function(object) {
 	// create an X.buffer to store the vertices
 	// every vertex consists of 3 items (x,y,z)
 	vertexBuffer = new X.buffer(glVertexBuffer, points.count, 3);
+	console.log(points);
+	console.log(vertexBuffer);
 
 	points._dirty = false;
 
@@ -963,6 +1017,8 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	// the points are not dirty and the object already existed, so use the old
 	// buffer
+	window.console.log('VERTS3');
+
 	vertexBuffer = this._vertexBuffers.get(id);
 
     }
@@ -1061,6 +1117,9 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	// yes, there are point colors setup
 
+	console.log('COLORS!');
+	console.log(colors);
+
 	if (!existed || colors._dirty) {
 
 	    // the object either did not exist or the colors are dirty, so we
@@ -1120,9 +1179,7 @@ X.renderer3D.prototype.update_ = function(object) {
 	    if (this._context.isBuffer(oldScalarBuffer._glBuffer)) {
 
 		this._context.deleteBuffer(oldScalarBuffer._glBuffer);
-
 	    }
-
 	}
     }
 
@@ -1178,9 +1235,12 @@ X.renderer3D.prototype.update_ = function(object) {
     // FINAL STEPS
     //
 
+    console.log('FINAL STEPS');
+
     // add the object to the internal tree which reflects the rendering order
     // (based on opacity)
     if (!existed) {
+	console.log('adding to tree');
 	this._objects.add(object);
     }
 
@@ -1188,6 +1248,7 @@ X.renderer3D.prototype.update_ = function(object) {
     // at this point the buffers are: either null (if possible), a newly generated
     // one or an old one
     this._vertexBuffers.set(id, vertexBuffer);
+    //console.log(vertexBuffer);
     this._normalBuffers.set(id, normalBuffer);
     this._colorBuffers.set(id, colorBuffer);
     this._texturePositionBuffers.set(id, texturePositionBuffer);
@@ -1467,6 +1528,8 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 	// get outta here
 	return;
     }
+    //console.log(_numberOfObjects);
+
 
     if (picking) {
 
@@ -1593,6 +1656,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
     do {
 
 	var object = _objects[_numberOfObjects - i];
+	//console.log(object);
 
 	if (object) {
 	    // we have a valid object
@@ -1626,10 +1690,16 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 
 	    var magicMode = object._magicmode;
 
+
+	    //var vertexBuffer = null;
 	    var vertexBuffer = this._vertexBuffers.get(id);
+	    //console.log(vertexBuffer);
 	    var normalBuffer = this._normalBuffers.get(id);
 
+
+	    //IS THIS WHERE THE COLORS GET CALLED?
 	    var colorBuffer = this._colorBuffers.get(id);
+	    //var colorBuffer = null;
 	    var scalarBuffer = this._scalarBuffers.get(id);
 	    var texturePositionBuffer = this._texturePositionBuffers.get(id);
 
@@ -1664,6 +1734,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 	    // COLORS
 	    if (colorBuffer && !picking && !magicMode) {
 
+		//console.log('COLOR BUFFER READY');
 		// point colors are defined for this object and there is not picking
 		// request and no magicMode active
 
@@ -1677,6 +1748,8 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 						  this._context.FLOAT, false, 0, 0);
 
 	    } else {
+
+		//console.log('USE OBJECT COLOR');
 
 		// we have a fixed object color or this is 'picking' mode
 		var useObjectColor = 1;
@@ -1693,6 +1766,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 		this._context.uniform1i(uUseObjectColor, useObjectColor);
 
 		var objectColor = object._color;
+		//console.log(objectColor);
 
 		if (picking) {
 
@@ -1790,7 +1864,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 		// key
 		this._context.bindTexture(this._context.TEXTURE_2D, this._textures
 					  .get(object._texture._id));
-		this._context.uniform1i(uTextureSampler, 0);
+		this._context.uniform1i(uTextureSampler2, 0);
 
 		// propagate the current texture-coordinate-map to WebGL
 		this._context.bindBuffer(this._context.ARRAY_BUFFER,
@@ -1901,12 +1975,16 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 	    var drawMode = -1;
 	    if (object._type == X.displayable.types.TRIANGLES) {
 
+		//console.log('TRI');
+
 		drawMode = this._context.TRIANGLES;
 		if (statisticsEnabled) {
 		    trianglesCounter += (vertexBuffer._itemCount / 3);
 		}
 
 	    } else if (object._type == X.displayable.types.LINES) {
+
+		//console.log('Lines');
 
 		this._context.lineWidth(object._linewidth);
 
@@ -1917,6 +1995,8 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 
 	    } else if (object._type == X.displayable.types.POINTS) {
 
+		//console.log('Points');
+
 		drawMode = this._context.POINTS;
 		if (statisticsEnabled) {
 		    pointsCounter += vertexBuffer._itemCount;
@@ -1924,12 +2004,16 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 
 	    } else if (object._type == X.displayable.types.TRIANGLE_STRIPS) {
 
+		//console.log('TRISTRIPS');
+
 		drawMode = this._context.TRIANGLE_STRIP;
 		if (statisticsEnabled) {
 		    trianglesCounter += (vertexBuffer._itemCount / 3);
 		}
 
 	    } else if (object._type == X.displayable.types.POLYGONS) {
+
+		//console.log('Poly');
 
 		// TODO right now, this is hacked.. we need to use the Van Gogh
 		// triangulation algorithm or something faster to properly convert
@@ -1957,6 +2041,8 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 		verticesCounter += vertexBuffer._itemCount;
 
 	    }
+
+
 
 	    // push it to the GPU, baby..
 	    this._context.drawArrays(drawMode, 0, vertexBuffer._itemCount);
