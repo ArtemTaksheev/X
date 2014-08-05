@@ -552,12 +552,34 @@ X.renderer3D.prototype.setColortable = function(index) {
 	}
     }
 
-
-
     //_volume._texture._dirty = true;
     this.update_(_volume);
 
 };
+
+
+
+X.renderer3D.prototype.resetTextures = function(){
+
+    var _volume = this._topLevelObjects[0];
+
+    for (var i = 0; i < _volume._children.length; i++){ 
+	for(var j = 0; j < _volume._children[i]._children.length; j++){
+	    console.log('setting to dirty');
+	    if(_volume._children[i]._children[j]){
+		console.log(_volume._children[i]._children[j]);
+		_volume._children[i]._children[j]._texture._dirty = true;
+	    }
+	}
+    }
+
+    //_volume._texture._dirty = true;
+    this.update_(_volume);
+
+
+};
+
+
 
 /**
  * @inheritDoc
@@ -2559,3 +2581,5 @@ goog.exportSymbol('X.renderer3D.prototype.update',
 		  X.renderer3D.prototype.update);
 goog.exportSymbol('X.renderer3D.prototype.setColortable',
 		  X.renderer3D.prototype.setColortable);
+goog.exportSymbol('X.renderer3D.prototype.resetTextures',
+		  X.renderer3D.prototype.resetTextures);
