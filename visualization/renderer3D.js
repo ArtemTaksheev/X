@@ -407,7 +407,7 @@ X.renderer3D.prototype.init = function() {
 
 X.renderer3D.prototype.update  = function(object) {
     //requires the volume to be loaded
-    window.console.log('X.renderer2d.update()');
+    //window.console.log('X.renderer2d.update()');
 
     //do both updates get called!?
 
@@ -529,7 +529,7 @@ X.renderer3D.prototype.addShaders = function(shaders) {
  */
 X.renderer3D.prototype.setColortable = function(index) {
 
-    window.console.log('X.renderer3D.setColortable(' + index + ')');
+    //window.console.log('X.renderer3D.setColortable(' + index + ')');
 
     var _volume = this._topLevelObjects[0];
 
@@ -540,13 +540,11 @@ X.renderer3D.prototype.setColortable = function(index) {
     else if (index == 2)
 	this._colArrayCURRENT = this._colArrayHEAT;
 
-    console.log(_volume);
+
 
     for (var i = 0; i < _volume._children.length; i++){ 
 	for(var j = 0; j < _volume._children[i]._children.length; j++){
-	    console.log('setting to dirty');
 	    if(_volume._children[i]._children[j]){
-		console.log(_volume._children[i]._children[j]);
 		_volume._children[i]._children[j]._texture._dirty = true;
 	    }
 	}
@@ -565,9 +563,7 @@ X.renderer3D.prototype.resetTextures = function(){
 
     for (var i = 0; i < _volume._children.length; i++){ 
 	for(var j = 0; j < _volume._children[i]._children.length; j++){
-	    console.log('setting to dirty');
 	    if(_volume._children[i]._children[j]){
-		console.log(_volume._children[i]._children[j]);
 		_volume._children[i]._children[j]._texture._dirty = true;
 	    }
 	}
@@ -586,10 +582,10 @@ X.renderer3D.prototype.resetTextures = function(){
  */
 X.renderer3D.prototype.update_ = function(object) {
     
-    window.console.log('X.renderer3d.update_()');
+    //window.console.log('X.renderer3d.update_()');
     // call the update_ method of the superclass
     goog.base(this, 'update_', object);
-    window.console.log('X.renderer3d.update_()...');
+    //window.console.log('X.renderer3d.update_()...');
     // check if object already existed..
     var existed = false;
 
@@ -601,8 +597,8 @@ X.renderer3D.prototype.update_ = function(object) {
 	existed = true;
 
     }
-    console.log('OBJECT = ');
-    console.log(object);
+    //console.log('OBJECT = ');
+    //console.log(object);
 
     var id = object._id;
     var points = object._points;
@@ -617,8 +613,8 @@ X.renderer3D.prototype.update_ = function(object) {
     var scalars = object._scalars; // same direct access policy
 
 
-    console.log('TEXTURE = ');
-    console.log(texture);
+    //console.log('TEXTURE = ');
+    //console.log(texture);
 
     //
     // LABEL MAP
@@ -697,7 +693,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	} else if (!object._dirty) {
 
-	    console.log('ALREADY PARSED THE VOLUME');
+	    //console.log('ALREADY PARSED THE VOLUME');
 	    // already parsed the volume
 	    return;
 
@@ -738,7 +734,7 @@ X.renderer3D.prototype.update_ = function(object) {
 	var numberOfChildren = children.length;
 	var c = 0;
 
-	console.log('LOOPING THROUGH ' + numberOfChildren + ' CHILDREN');
+	//console.log('LOOPING THROUGH ' + numberOfChildren + ' CHILDREN');
 
 	for (c = 0; c < numberOfChildren; c++) {
 
@@ -752,7 +748,7 @@ X.renderer3D.prototype.update_ = function(object) {
     // empty objects can be used to group objects
     if (!points) {
 
-	console.log('EMPTY OBJECT');
+	//console.log('EMPTY OBJECT');
 	object._dirty = false;
 	return;
 
@@ -778,8 +774,6 @@ X.renderer3D.prototype.update_ = function(object) {
     // This gets executed after all dynamic content has been loaded.
 
     // X.TIMER(this._classname + '.update');
-
-    console.log('GO TIME!');
 
     // check if this is an X.slice as part of a X.labelmap
     var isLabelMap = (object instanceof X.slice && object._volume instanceof X.labelmap);
@@ -815,7 +809,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	if (!existed || texture._dirty) {
 
-	    window.console.log('TEXTURE2');
+	    //window.console.log('TEXTURE2');
 	    // the object either did not exist or the texture is dirty, so we
 	    // re-create the gl buffers
 
@@ -943,13 +937,12 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	    this._texturePositionBuffers.set(id, texturePositionBuffer);
 
-	    console.log(texture);
-
+	    
 	    texture._dirty = false;
 
 	} else {
 	    
-	    window.console.log('TEXTURE3');
+	    //window.console.log('TEXTURE3');
 	    // the texture is not dirty and the object already existed, so use the old
 	    // buffer
 	    texturePositionBuffer = this._texturePositionBuffers.get(id);
@@ -997,7 +990,7 @@ X.renderer3D.prototype.update_ = function(object) {
 	var transformationMatrix = transform._matrix;
 
 
-	console.log('BOUNDING BOX');
+	//console.log('BOUNDING BOX');
 
 	var tMin = X.matrix.multiplyByVector(transformationMatrix, points._minA, points._minB, points._minC);
 	var tMax = X.matrix.multiplyByVector(transformationMatrix, points._maxA, points._maxB, points._maxC);
@@ -1039,7 +1032,7 @@ X.renderer3D.prototype.update_ = function(object) {
 	// this means the object already existed and the points are dirty
 	// therefore, we delete the old gl buffers
 
-	window.console.log('VERTS1');
+	//window.console.log('VERTS1');
 
 	// remove old vertex buffer
 	var oldVertexBuffer = this._vertexBuffers.get(id);
@@ -1059,7 +1052,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
     if (!existed || points._dirty) {
 
-	window.console.log('VERTS2');
+	//window.console.log('VERTS2');
 	// the object either did not exist or the points are dirty, so we re-create
 	// the gl buffers and reset the bounding box
 
@@ -1078,17 +1071,14 @@ X.renderer3D.prototype.update_ = function(object) {
 	// create an X.buffer to store the vertices
 	// every vertex consists of 3 items (x,y,z)
 	vertexBuffer = new X.buffer(glVertexBuffer, points.count, 3);
-	console.log(points);
-	console.log(vertexBuffer);
-
+	
 	points._dirty = false;
 
     } else {
 
 	// the points are not dirty and the object already existed, so use the old
 	// buffer
-	window.console.log('VERTS3');
-
+	
 	vertexBuffer = this._vertexBuffers.get(id);
 
     }
@@ -1187,9 +1177,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
 	// yes, there are point colors setup
 
-	console.log('COLORS!');
-	console.log(colors);
-
+	
 	if (!existed || colors._dirty) {
 
 	    // the object either did not exist or the colors are dirty, so we
@@ -1305,12 +1293,9 @@ X.renderer3D.prototype.update_ = function(object) {
     // FINAL STEPS
     //
 
-    console.log('FINAL STEPS');
-
     // add the object to the internal tree which reflects the rendering order
     // (based on opacity)
     if (!existed) {
-	console.log('adding to tree');
 	this._objects.add(object);
     }
 

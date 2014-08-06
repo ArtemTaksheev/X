@@ -809,6 +809,9 @@ X.renderer2D.prototype.update_ = function(object) {
  */
 X.renderer2D.prototype.autoScale_ = function() {
 
+
+    console.log('X.renderer2D.autoscale_()');
+
     // let's auto scale for best fit
     var _wScale = this._width / (this._sliceWidth * this._sliceWidthSpacing);
     var _hScale = this._height / (this._sliceHeight * this._sliceHeightSpacing);
@@ -834,6 +837,114 @@ X.renderer2D.prototype.onSliceNavigation = function() {
 };
 
 
+X.renderer2D.prototype.ij2xy = function(i, j) {
+    //passing in slice indeces
+
+
+    console.log('X.renderer2D.ij2xy()');
+
+    var _volume = this._topLevelObjects[0];
+    console.log(_volume);
+    var _view = this._camera._view;
+    var _currentSlice = null;
+
+    var _sliceWidth = this._sliceWidth;
+    var _sliceHeight = this._sliceHeight;
+    var _sliceWSpacing = null;
+    var _sliceHSpacing = null;
+
+    // get current slice
+    // which color?
+    if (this._orientation == "Y") {
+	_currentSlice = this._slices[parseInt(_volume['indexY'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+
+
+    } else if (this._orientation == "Z") {
+	_currentSlice = this._slices[parseInt(_volume['indexZ'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+
+
+    } else {
+	_currentSlice = this._slices[parseInt(_volume['indexX'], 10)];
+	_sliceWSpacing = _currentSlice._heightSpacing;
+	_sliceHSpacing = _currentSlice._widthSpacing;
+
+
+	var _buf = _sliceWidth;
+	_sliceWidth = _sliceHeight;
+	_sliceHeight = _buf;
+    }
+
+    console.log(_currentSlice);
+
+    console.log('SLICEWIDTH = ' + _sliceWidth)
+    console.log('SLICEHEIGHT = ' + _sliceHeight)
+
+
+
+    // padding offsets
+    var _x = 1 * _view[12];
+    var _y = -1 * _view[13]; // we need to flip y here
+
+    // .. and zoom
+    var _normalizedScale = Math.max(_view[14], 0.6);
+    var _center = [this._width / 2, this._height / 2];
+
+    // the slice dimensions in canvas coordinates
+    var _sliceWidthScaled = _sliceWidth * _sliceWSpacing *
+	_normalizedScale;
+    var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
+	_normalizedScale;
+
+
+    console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
+    console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
+
+    // the image borders on the left and top in canvas coordinates
+    var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
+    var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
+
+    //console.log(_image_left2xy);
+    //console.log(_image_top2xy);
+
+    // incorporate the padding offsets (but they have to be scaled)
+    _image_left2xy += _x * _normalizedScale;
+    _image_top2xy += _y * _normalizedScale;
+
+    console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
+    console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
+
+
+    //need to figure out the percentage of SliceIndex
+
+    console.log('_currentSlice wmin wmax:');
+    console.log(_currentSlice._wmin + ', ' + _currentSlice._wmax);    
+
+
+    var percentageW = (i)/_sliceHeight;//mixing these up, special case with X direction case, since canvas is rotated!?
+    console.log('PERCENTAGE W of ' + i);
+    console.log(percentageW);
+
+
+    console.log('_currentSlice hmin hmax:');
+    console.log(_currentSlice._hmin + ', ' + _currentSlice._hmax);
+
+    var percentageH = (j)/_sliceWidth;
+    console.log('PERCENTAGE H of ' + j);
+    console.log(percentageH);
+
+    //var pixX = (percentageW * _sliceHeightScaled) + _image_left2xy;
+    //var pixY = (percentageH * _sliceWidthScaled) + _image_top2xy;
+    var pixX = _image_left2xy + _sliceWidthScaled - (percentageW * _sliceHeightScaled);
+    var pixY = _image_top2xy + _sliceHeightScaled - (percentageH * _sliceWidthScaled);
+
+    return [pixX, pixY];
+
+}
+
 /**
  * Convert viewport (canvas) coordinates to volume (index) coordinates.
  *
@@ -842,6 +953,10 @@ X.renderer2D.prototype.onSliceNavigation = function() {
  * @return {?Array} An array of [i,j,k] coordinates or null if out of frame.
  */
 X.renderer2D.prototype.xy2ijk = function(x, y) {
+
+    console.log('X.renderer2D.xy2ijk()');
+    console.log(x + ', ' + y);
+
 
     var _volume = this._topLevelObjects[0];
     var _view = this._camera._view;
@@ -879,6 +994,10 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	_sliceWidth = _sliceHeight;
 	_sliceHeight = _buf;
     }
+    console.log('SLICEWIDTH = ' + _sliceWidth)
+    console.log('SLICEHEIGHT = ' + _sliceHeight)
+
+
 
     // padding offsets
     var _x = 1 * _view[12];
@@ -894,13 +1013,24 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
 	_normalizedScale;
 
+
+    console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
+    console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
+
     // the image borders on the left and top in canvas coordinates
     var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
     var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
 
+    //console.log(_image_left2xy);
+    //console.log(_image_top2xy);
+
     // incorporate the padding offsets (but they have to be scaled)
     _image_left2xy += _x * _normalizedScale;
     _image_top2xy += _y * _normalizedScale;
+
+    console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
+    console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
+    
 
     if(x>_image_left2xy && x < _image_left2xy + _sliceWidthScaled &&
        y>_image_top2xy && y < _image_top2xy + _sliceHeightScaled){
@@ -941,6 +1071,9 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	_y = _currentSlice._hmin + _y*_currentSlice._heightSpacing;
 
 	var _xyz = goog.vec.Vec4.createFloat32FromValues(_x, _y, _z, 1);
+
+	//console.log(_xyz);
+
 	var _ijk = goog.vec.Mat4.createFloat32();
 	goog.vec.Mat4.multVec4(_currentSlice._XYToIJK, _xyz, _ijk);
 	var _ras = goog.vec.Mat4.createFloat32();
@@ -987,7 +1120,8 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	    // translate origin by distance
 	    _iz = 0;
 	}
-
+	
+	console.log([[_ix, _iy, _iz], [_ijk[0], _ijk[1], _ijk[2]], [_ras[0], _ras[1], _ras[2]]][0]);
 	return [[_ix, _iy, _iz], [_ijk[0], _ijk[1], _ijk[2]], [_ras[0], _ras[1], _ras[2]]];
     }
 
@@ -1110,6 +1244,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 		}
 
+		//not strictly necessary?
 		var _sliceWidth = this._sliceWidth;
 		var _sliceHeight = this._sliceHeight;
 
@@ -1129,6 +1264,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		var _labelmapData = _labelFBContext.getImageData(0, 0, _sliceWidth,
 								 _sliceHeight);
 		var _pixels = _imageData.data;
+
+		//console.log(_pixels);
+
 		var _labelPixels = _labelmapData.data;
 		var _pixelsLength = _pixels.length;
 
@@ -1266,8 +1404,6 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 				      this._colArrayCURRENT[_origIntensityG][1],
 				      this._colArrayCURRENT[_origIntensityB][2],
 				      255];
-			    
-
 
 			    if (_currentLabelMap) {
 
@@ -1280,9 +1416,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 					      _labelData[_index + 1],
 					      _labelData[_index + 2], 
 					      _labelData[_index + 3]];
-
 				} else {
-
 				    // show only the label which matches in color
 				    if (X.array.compare(_labelmapShowOnlyColor, _labelData, 0, _index,
 							4)) {
@@ -1292,13 +1426,9 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 						  _labelData[_index + 1],
 						  _labelData[_index + 2], 
 						  _labelData[_index + 3]];
-
 				    }
-
 				}
-
 			    }
-
 			}
 
 			if(this._orientation == "X"){
