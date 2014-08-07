@@ -840,11 +840,12 @@ X.renderer2D.prototype.onSliceNavigation = function() {
 X.renderer2D.prototype.ij2xy = function(i, j) {
     //passing in slice indeces
 
+    console.log('X.renderer2D.ij2xy(' + i + ', ' + j + ')');
+    console.log('DOING - ' + this._orientation);
+    console.log('=================== ');
 
-    console.log('X.renderer2D.ij2xy()');
 
     var _volume = this._topLevelObjects[0];
-    console.log(_volume);
     var _view = this._camera._view;
     var _currentSlice = null;
 
@@ -855,19 +856,53 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
 
     // get current slice
     // which color?
+
+    var directionX = true;
+    var directionY = true;
+
     if (this._orientation == "Y") {
+	var dirX = _volume._childrenInfo[0]._sliceDirection;
+	var dirY = _volume._childrenInfo[2]._sliceDirection;
+
+	if(dirX[0] >= 0)
+	    directionX = false;
+	if(dirY[2] >= 0)
+	    directionY = false;
+
+
+
 	_currentSlice = this._slices[parseInt(_volume['indexY'], 10)];
 	_sliceWSpacing = _currentSlice._widthSpacing;
 	_sliceHSpacing = _currentSlice._heightSpacing;
 
 
     } else if (this._orientation == "Z") {
+
+	var dirX = _volume._childrenInfo[0]._sliceDirection;
+	var dirY = _volume._childrenInfo[1]._sliceDirection;
+
+	if(dirX[0] >= 0)
+	    directionX = false;
+	if(dirY[1] >= 0)
+	    directionY = false;	   
+
 	_currentSlice = this._slices[parseInt(_volume['indexZ'], 10)];
 	_sliceWSpacing = _currentSlice._widthSpacing;
 	_sliceHSpacing = _currentSlice._heightSpacing;
 
 
     } else {
+	//X = SPECIAL CASE	
+
+	var dirX = _volume._childrenInfo[2]._sliceDirection;
+	var dirY = _volume._childrenInfo[1]._sliceDirection;
+
+	if(dirX[2] >= 0)
+	    directionY = false;
+	if(dirY[1] >= 0)
+	    directionX = false;
+
+
 	_currentSlice = this._slices[parseInt(_volume['indexX'], 10)];
 	_sliceWSpacing = _currentSlice._heightSpacing;
 	_sliceHSpacing = _currentSlice._widthSpacing;
@@ -878,7 +913,13 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
 	_sliceHeight = _buf;
     }
 
+    console.log(_volume);
     console.log(_currentSlice);
+
+
+    console.log('directionX = ' + directionX);
+    console.log('directionY = ' + directionY);
+
 
     console.log('SLICEWIDTH = ' + _sliceWidth)
     console.log('SLICEHEIGHT = ' + _sliceHeight)
@@ -918,28 +959,45 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
     console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
 
 
-    //need to figure out the percentage of SliceIndex
+    //need to figure out the percentage of SliceIndex  
 
-    console.log('_currentSlice wmin wmax:');
-    console.log(_currentSlice._wmin + ', ' + _currentSlice._wmax);    
+    //need to check the slice direction
 
 
-    var percentageW = (i)/_sliceHeight;//mixing these up, special case with X direction case, since canvas is rotated!?
+
+
+
+
+    var percentageW = 0;
+    var pixX = 0;
+
+
+    percentageW = (i)/_sliceWidth;
+    if(directionX)
+	pixX = _image_left2xy + (percentageW * _sliceWidthScaled);
+    else
+	pixX = _image_left2xy + _sliceWidthScaled - (percentageW * _sliceWidthScaled);
+
     console.log('PERCENTAGE W of ' + i);
     console.log(percentageW);
 
 
-    console.log('_currentSlice hmin hmax:');
-    console.log(_currentSlice._hmin + ', ' + _currentSlice._hmax);
+    var percentageH = 0;
+    var pixY = 0;
 
-    var percentageH = (j)/_sliceWidth;
+    percentageH = (j)/_sliceHeight;
+
+    if(directionY)
+	pixY = _image_top2xy + (percentageH * _sliceHeightScaled);
+    else
+	pixY = _image_top2xy + _sliceHeightScaled - (percentageH * _sliceHeightScaled);
+
     console.log('PERCENTAGE H of ' + j);
     console.log(percentageH);
 
-    //var pixX = (percentageW * _sliceHeightScaled) + _image_left2xy;
-    //var pixY = (percentageH * _sliceWidthScaled) + _image_top2xy;
-    var pixX = _image_left2xy + _sliceWidthScaled - (percentageW * _sliceHeightScaled);
-    var pixY = _image_top2xy + _sliceHeightScaled - (percentageH * _sliceWidthScaled);
+
+    console.log('RETURNING:');
+    console.log( [pixX, pixY]);
 
     return [pixX, pixY];
 
