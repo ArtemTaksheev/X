@@ -787,7 +787,7 @@ X.parser.xyBBox = function(_solutionsXY){
  */
 X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color, _bbox, _IJKVolume, object, hasLabelMap, colorTable){
 
-    window.console.log('X.parser.reslice2()');
+    //window.console.log('X.parser.reslice2()');
 
     var sliceXY = new X.slice();
 
@@ -1148,7 +1148,7 @@ X.parser.prototype.updateSliceInfo = function(_index, _sliceOrigin, _sliceNormal
  */
 X.parser.prototype.reslice = function(object) {
 
-    window.console.log('X.parser.reslice()');
+    //window.console.log('X.parser.reslice()');
     
     // ------------------------------------------
     // CREATE IJK VOLUMES
@@ -1226,15 +1226,15 @@ X.parser.prototype.reslice = function(object) {
     _sliceOrigin[1] = object._childrenInfo[0]._solutionsLine[0][0][1] + object._childrenInfo[0]._sliceDirection[1]*Math.floor(object._childrenInfo[0]._nb/2);
     _sliceOrigin[2] = object._childrenInfo[0]._solutionsLine[0][0][2] + object._childrenInfo[0]._sliceDirection[2]*Math.floor(object._childrenInfo[0]._nb/2);
 
-    console.log('OBJECT:');
-    console.log(object);
+    //console.log('OBJECT:');
+    //console.log(object);
 
     var _slice = X.parser.reslice2(_sliceOrigin, object._childrenInfo[0]._sliceXYSpacing, object._childrenInfo[0]._sliceNormal, object._childrenInfo[0]._color, object._BBox, object._IJKVolume, object, object.hasLabelMap, object._colorTable);
     
 
     //D.B.
-    window.console.log('X.parser.reslice() - new X slice id:');
-    window.console.log(_slice._id);
+    //window.console.log('X.parser.reslice() - new X slice id:');
+    //window.console.log(_slice._id);
     
     if (object.hasLabelMap) {
 	// if this object has a labelmap,
@@ -1291,8 +1291,8 @@ X.parser.prototype.reslice = function(object) {
     }
     
     //D.B.
-    window.console.log('X.parser.reslice() - new Y slice id:');
-    window.console.log(_slice._id);
+    //window.console.log('X.parser.reslice() - new Y slice id:');
+    //window.console.log(_slice._id);
 
     object._children[1]._children[Math.floor(object._childrenInfo[1]._nb/2)] = _slice;
     
@@ -1341,8 +1341,8 @@ X.parser.prototype.reslice = function(object) {
     }
     
     //D.B.
-    window.console.log('X.parser.reslice() - new Z slice id:');
-    window.console.log(_slice._id);
+    //window.console.log('X.parser.reslice() - new Z slice id:');
+    //window.console.log(_slice._id);
 
     object._children[2]._children[Math.floor(object._childrenInfo[2]._nb/2)] = _slice;
     

@@ -598,7 +598,7 @@ X.renderer2D.prototype.volumeChildrenIndex_ = function(targetOrientation) {
 
 X.renderer2D.prototype.update  = function(object) {
     //requires the volume to be loaded
-    window.console.log('X.renderer2d.update()');
+    //window.console.log('X.renderer2d.update()');
 
     //do both updates get called!?
 
@@ -613,7 +613,7 @@ X.renderer2D.prototype.update  = function(object) {
  */
 X.renderer2D.prototype.update_ = function(object) {
 
-    window.console.log('X.renderer2d.update_() - ' + this.orientation);
+    //window.console.log('X.renderer2d.update_() - ' + this.orientation);
     //window.console.log(object);
 
     // call the update_ method of the superclass
@@ -712,7 +712,7 @@ X.renderer2D.prototype.update_ = function(object) {
 
 	} else if (existed && !object._dirty) {
 
-	    window.console.log('ALREADY PARSED VOLUME');
+	    //window.console.log('ALREADY PARSED VOLUME');
 	    // already parsed the volume
 	    return;
 
@@ -725,7 +725,7 @@ X.renderer2D.prototype.update_ = function(object) {
     // with one file
     else if (goog.isDefAndNotNull(file) && file._dirty) {
 
-	window.console.log('X.renderer2d.update_ just one file!');
+	//window.console.log('X.renderer2d.update_ just one file!');
 
 	// this object is based on an external file and it is dirty..
 	// start loading..
@@ -837,12 +837,184 @@ X.renderer2D.prototype.onSliceNavigation = function() {
 };
 
 
+//should feed in ijk array here?
+X.renderer2D.prototype.ijk2xy = function(_ijk) {
+
+
+    console.log('X.renderer2D.ijk2xy()');
+    console.log('DOING - ' + this._orientation);
+    console.log('=================== ');
+
+
+    //console.log('IJK = ');
+    //console.log(_ijk);
+
+    /////////////////////////// PART 1 //////////////////////
+
+    var _volume = this._topLevelObjects[0];
+    var _view = this._camera._view;
+    var _currentSlice = null;
+
+    var _sliceWidth = this._sliceWidth;
+    var _sliceHeight = this._sliceHeight;
+    var _sliceWSpacing = null;
+    var _sliceHSpacing = null;
+
+    // get current slice
+    // which color?
+    if (this._orientation == "Y") {
+	_currentSlice = this._slices[parseInt(_volume['indexY'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+	this._orientationColors[0] = 'red';
+	this._orientationColors[1] = 'blue';
+
+    } else if (this._orientation == "Z") {
+	_currentSlice = this._slices[parseInt(_volume['indexZ'], 10)];
+	_sliceWSpacing = _currentSlice._widthSpacing;
+	_sliceHSpacing = _currentSlice._heightSpacing;
+	this._orientationColors[0] = 'red';
+	this._orientationColors[1] = 'green';
+
+    } else {
+	_currentSlice = this._slices[parseInt(_volume['indexX'], 10)];
+	_sliceWSpacing = _currentSlice._heightSpacing;
+	_sliceHSpacing = _currentSlice._widthSpacing;
+	this._orientationColors[0] = 'green';
+	this._orientationColors[1] = 'blue';
+
+	var _buf = _sliceWidth;
+	_sliceWidth = _sliceHeight;
+	_sliceHeight = _buf;
+    }
+
+
+
+    // padding offsets
+    var _x2 = 1 * _view[12];
+    var _y2 = -1 * _view[13]; // we need to flip y here
+
+    // .. and zoom
+    var _normalizedScale = Math.max(_view[14], 0.6);
+    var _center = [this._width / 2, this._height / 2];
+
+    // the slice dimensions in canvas coordinates
+    var _sliceWidthScaled = _sliceWidth * _sliceWSpacing *
+	_normalizedScale;
+    var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
+	_normalizedScale;
+
+
+    //console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
+    //console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
+
+    
+    // the image borders on the left and top in canvas coordinates
+    var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
+    var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
+
+
+
+    // incorporate the padding offsets (but they have to be scaled)
+    _image_left2xy += _x2 * _normalizedScale;
+    _image_top2xy += _y2 * _normalizedScale;
+
+
+    //console.log('IMAGELEFT = ' + _image_left2xy);
+    //console.log('IMAGETOP = ' + _image_top2xy);
+
+
+    /////////////////////////// PART 2 //////////////////////
+
+
+    //REVERT MATRIX MULT
+    var invert = goog.vec.Mat4.createFloat32();
+    goog.vec.Mat4.invert(_currentSlice._XYToIJK, invert);
+
+    //console.log('INVERT = ');
+    //console.log(invert);
+
+    var _ijkFloat = goog.vec.Mat4.createFloat32();
+
+    _ijkFloat[0] = _ijk[0];
+    _ijkFloat[1] = _ijk[1];
+    _ijkFloat[2] = _ijk[2];
+
+    //console.log('IJK = ');
+    //console.log(_ijkFloat);
+    
+    var _xyz = goog.vec.Mat4.createFloat32();	
+    goog.vec.Mat4.multVec4(invert, _ijkFloat, _xyz);
+
+    //console.log('XYZ = ');
+    //console.log(_xyz);
+
+    var _x = _xyz[0];
+    var _y = _xyz[1];
+
+    _x = _x - _currentSlice._wmin;
+    _y = _y - _currentSlice._hmin;
+
+    _x = _x/_currentSlice._widthSpacing;
+    _y = _y/_currentSlice._heightSpacing;
+
+
+
+    if (this._orientation == "X") {
+	// invert cols
+	// then invert x and y to compensate camera +90d rotation
+
+	//REORDERED THESE...
+
+	var _buf = _x;
+	_x = _y;
+	_y = _buf;
+
+	_x = _sliceWidth - _x;	
+    }
+
+    else if (this._orientation == "Y") {
+	
+	// invert cols
+	_x = _sliceWidth - _x;
+	
+    }
+    else if (this._orientation == "Z") {
+	
+	// invert all
+	_x = _sliceWidth - _x;
+	_y = _sliceHeight - _y;
+	
+    }
+
+
+
+    //ignore z
+    var Ax = _image_left2xy;
+    var Bx = _sliceWidthScaled;
+    var Cx = _sliceWidth;
+    var x = ((_x * Bx)/Cx) + Ax;
+
+    var Ay = _image_top2xy;
+    var By = _sliceHeightScaled;
+    var Cy = _sliceHeight;
+    var y = ((_y * By)/Cy) + Ay;
+
+
+    return [x, y];
+
+
+
+
+};
+
+
 X.renderer2D.prototype.ij2xy = function(i, j) {
     //passing in slice indeces
 
-    console.log('X.renderer2D.ij2xy(' + i + ', ' + j + ')');
-    console.log('DOING - ' + this._orientation);
-    console.log('=================== ');
+    //console.log('X.renderer2D.ij2xy(' + i + ', ' + j + ')');
+    //console.log('DOING - ' + this._orientation);
+    //console.log('=================== ');
 
 
     var _volume = this._topLevelObjects[0];
@@ -913,17 +1085,8 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
 	_sliceHeight = _buf;
     }
 
-    console.log(_volume);
-    console.log(_currentSlice);
-
-
-    console.log('directionX = ' + directionX);
-    console.log('directionY = ' + directionY);
-
-
-    console.log('SLICEWIDTH = ' + _sliceWidth)
-    console.log('SLICEHEIGHT = ' + _sliceHeight)
-
+    //console.log('SLICEWIDTH = ' + _sliceWidth)
+    //console.log('SLICEHEIGHT = ' + _sliceHeight)
 
 
     // padding offsets
@@ -934,70 +1097,54 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
     var _normalizedScale = Math.max(_view[14], 0.6);
     var _center = [this._width / 2, this._height / 2];
 
+
+
     // the slice dimensions in canvas coordinates
     var _sliceWidthScaled = _sliceWidth * _sliceWSpacing *
 	_normalizedScale;
     var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
 	_normalizedScale;
 
-
-    console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
-    console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
+    //console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
+    //console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
 
     // the image borders on the left and top in canvas coordinates
-    var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
-    var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
+    var _image_left2xy = _center[0] - _sliceWidthScaled / 2;
+    var _image_top2xy = _center[1] - _sliceHeightScaled / 2;
 
-    //console.log(_image_left2xy);
-    //console.log(_image_top2xy);
 
     // incorporate the padding offsets (but they have to be scaled)
     _image_left2xy += _x * _normalizedScale;
     _image_top2xy += _y * _normalizedScale;
 
-    console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
-    console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
-
-
-    //need to figure out the percentage of SliceIndex  
-
-    //need to check the slice direction
-
-
-
-
-
+    //console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
+    //console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
 
     var percentageW = 0;
     var pixX = 0;
 
-
     percentageW = (i)/_sliceWidth;
-    if(directionX)
-	pixX = _image_left2xy + (percentageW * _sliceWidthScaled);
-    else
-	pixX = _image_left2xy + _sliceWidthScaled - (percentageW * _sliceWidthScaled);
 
-    console.log('PERCENTAGE W of ' + i);
-    console.log(percentageW);
+
+    //console.log('PERCENTAGE_W = ' + percentageW);
+
+    if(directionX)
+	pixX = Math.round(_image_left2xy + (percentageW * _sliceWidthScaled));
+    else
+	pixX = Math.round(_image_left2xy + _sliceWidthScaled - (percentageW * _sliceWidthScaled));
 
 
     var percentageH = 0;
     var pixY = 0;
 
     percentageH = (j)/_sliceHeight;
+    //console.log('PERCENTAGE_H = ' + percentageH);
+
 
     if(directionY)
-	pixY = _image_top2xy + (percentageH * _sliceHeightScaled);
+	pixY = Math.round(_image_top2xy + (percentageH * _sliceHeightScaled));
     else
-	pixY = _image_top2xy + _sliceHeightScaled - (percentageH * _sliceHeightScaled);
-
-    console.log('PERCENTAGE H of ' + j);
-    console.log(percentageH);
-
-
-    console.log('RETURNING:');
-    console.log( [pixX, pixY]);
+	pixY = Math.round(_image_top2xy + _sliceHeightScaled - (percentageH * _sliceHeightScaled));
 
     return [pixX, pixY];
 
@@ -1012,8 +1159,9 @@ X.renderer2D.prototype.ij2xy = function(i, j) {
  */
 X.renderer2D.prototype.xy2ijk = function(x, y) {
 
-    console.log('X.renderer2D.xy2ijk()');
-    console.log(x + ', ' + y);
+    //console.log('X.renderer2D.xy2ijk(' + x + ', ' + y + ')');
+    //console.log('DOING - ' + this._orientation);
+    //console.log('=================== ');
 
 
     var _volume = this._topLevelObjects[0];
@@ -1052,8 +1200,9 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	_sliceWidth = _sliceHeight;
 	_sliceHeight = _buf;
     }
-    console.log('SLICEWIDTH = ' + _sliceWidth)
-    console.log('SLICEHEIGHT = ' + _sliceHeight)
+
+    //console.log('SLICEWIDTH = ' + _sliceWidth)
+    //console.log('SLICEHEIGHT = ' + _sliceHeight)
 
 
 
@@ -1072,9 +1221,10 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	_normalizedScale;
 
 
-    console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
-    console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
+    //console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
+    //console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
 
+    
     // the image borders on the left and top in canvas coordinates
     var _image_left2xy = _center[0] - (_sliceWidthScaled / 2);
     var _image_top2xy = _center[1] - (_sliceHeightScaled / 2);
@@ -1086,18 +1236,28 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
     _image_left2xy += _x * _normalizedScale;
     _image_top2xy += _y * _normalizedScale;
 
-    console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
-    console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
+    //console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
+    //console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
     
 
     if(x>_image_left2xy && x < _image_left2xy + _sliceWidthScaled &&
        y>_image_top2xy && y < _image_top2xy + _sliceHeightScaled){
 
+	//normalising x and y here
 	var _xNorm = (x - _image_left2xy)/ _sliceWidthScaled;
 	var _yNorm = (y - _image_top2xy)/ _sliceHeightScaled;
 	
 	_x = _xNorm*_sliceWidth;
 	_y = _yNorm*_sliceHeight;
+	
+	/*
+	  
+	  _x = ((x - _image_left2xy) * sliceWidth) / _sliceWidthScaled;
+
+
+	*/
+
+
 	var _z = _currentSlice._xyBBox[4];
 
 	if (this._orientation == "X") {
@@ -1125,17 +1285,59 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	}
 
 	// map indices to xy coordinates
+
+	//_x = _x*_currentSlice._widthSpacing;
+	//_y = _y*_currentSlice._heightSpacing;
+
+	//_x = _x + _currentSlice._wmin;
+	//_y = _y + _currentSlice._hmin;
+
+
 	_x = _currentSlice._wmin + _x*_currentSlice._widthSpacing;
 	_y = _currentSlice._hmin + _y*_currentSlice._heightSpacing;
 
 	var _xyz = goog.vec.Vec4.createFloat32FromValues(_x, _y, _z, 1);
 
+
+	//MATRIX MULT ==========================================
 	//console.log(_xyz);
 
 	var _ijk = goog.vec.Mat4.createFloat32();
 	goog.vec.Mat4.multVec4(_currentSlice._XYToIJK, _xyz, _ijk);
+	
+
+	/*
+	  //POSSIBLE TO REVERSE THE MATRIX MULTIPLICATION!! :)
+
+	console.log('M1:');
+	console.log(_currentSlice._XYToIJK);	
+
+
+	console.log('M2:');
+	console.log(_xyz);
+
+	console.log('M1 x M2 = M3:');
+	console.log(_ijk);
+
+	var invert = goog.vec.Mat4.createFloat32();
+	goog.vec.Mat4.invert(_currentSlice._XYToIJK, invert);
+	//console.log(invert);
+
+	var _test = goog.vec.Mat4.createFloat32();	
+	goog.vec.Mat4.multVec4(invert, _ijk, _test);
+
+	console.log('M1(-1) x M3 = M2:');
+	console.log(_test);
+	*/
+
+	//SAFE TO IGNORE THE REST BELOW, JUST LOOK AT _IJK
+
+
 	var _ras = goog.vec.Mat4.createFloat32();
 	goog.vec.Mat4.multVec4(_currentSlice._XYToRAS, _xyz, _ras);
+
+
+	//////////////////////////  X  ///////////////////////////////
 
 	var _dx = _volume._childrenInfo[0]._sliceNormal[0]*_ras[0]
 	    + _volume._childrenInfo[0]._sliceNormal[1]*_ras[1]
@@ -1150,6 +1352,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	    _ix = 0;
 	}
 
+	//////////////////////////  Y  ///////////////////////////////
 
 	var _dy = _volume._childrenInfo[1]._sliceNormal[0]*_ras[0]
 	    + _volume._childrenInfo[1]._sliceNormal[1]*_ras[1]
@@ -1163,6 +1366,8 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	else if(_iy < 0) {
 	    _iy = 0;
 	}
+
+	//////////////////////////  Z  ///////////////////////////////
 
 	// get plane distance from the origin
 	var _dz = _volume._childrenInfo[2]._sliceNormal[0]*_ras[0]
@@ -1179,7 +1384,6 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	    _iz = 0;
 	}
 	
-	console.log([[_ix, _iy, _iz], [_ijk[0], _ijk[1], _ijk[2]], [_ras[0], _ras[1], _ras[2]]][0]);
 	return [[_ix, _iy, _iz], [_ijk[0], _ijk[1], _ijk[2]], [_ras[0], _ras[1], _ras[2]]];
     }
 
@@ -1363,7 +1567,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    //else{
 
 		    //D.B.
-		    window.console.log('renderer2D.render_() - ' + this.orientation + ' - REDRAW REQUIRED');
+		    //window.console.log('renderer2D.render_() - ' + this.orientation + ' - REDRAW REQUIRED');
 		    //window.console.log('from ' + this._currentSliceId + ' to ' + _currentSliceId);
 
 		    // update FBs with new size

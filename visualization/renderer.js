@@ -1086,7 +1086,7 @@ X.renderer.prototype.onComputing = function(event) {
 X.renderer.prototype.onComputingEnd = function(event) {
 
     //D.B.
-    window.console.log('X.renderer.onComputingEnd()');
+    //window.console.log('X.renderer.onComputingEnd()');
 
    // only do the following if the progressBar was not turned off
     if (this._config['PROGRESSBAR_ENABLED']) {
@@ -1178,8 +1178,8 @@ X.renderer.prototype.onProgress = function(event) {
 X.renderer.prototype.onModified = function(event) {
 
     //D.B.
-    window.console.log('X.renderer.onModified() - ' + this.orientation);
-    window.console.log(event);
+    //window.console.log('X.renderer.onModified() - ' + this.orientation);
+    //window.console.log(event);
 
 
     if (goog.isDefAndNotNull(event) && event instanceof X.event.ModifiedEvent) {
@@ -1709,7 +1709,7 @@ X.renderer.prototype.init = function(_contextName) {
  */
 X.renderer.prototype.add = function(object) {
 
-    window.console.log('X.renderer.add()');
+    //window.console.log('X.renderer.add()');
 
     // for constructable objects (e.g. cube, sphere, cylinder), we call the
     // modified() function to generate the CSG representations
@@ -1774,7 +1774,7 @@ X.renderer.prototype.remove = function(object) {
  */
 X.renderer.prototype.update_ = function(object) {
 
-    window.console.log('X.renderer.update_');
+    //window.console.log('X.renderer.update_');
 
     if (!this._canvas || !this._context) {
 
