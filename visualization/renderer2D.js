@@ -536,8 +536,32 @@ X.renderer2D.prototype.setColortable = function(index) {
 
 };
 
+X.renderer2D.prototype.setLabelmapColortable = function(index) {
 
+    window.console.log('X.renderer2D.setLabelmapColortable(' + index + ')');
 
+    var _volume = this._topLevelObjects[0];
+
+    if (index == 0)
+	this._labelArrayCURRENT = this._colArrayDEFAULT;
+    if (index == 1)
+	this._labelArrayCURRENT = this._colArrayIDS;
+    else if (index == 2)
+	this._labelArrayCURRENT = this._colArrayHEAT;
+
+    this._labelArrayChanged =  true;
+
+};
+/*
+X.renderer2D.prototype.setLabelmap = function(filename) {
+
+    window.console.log('X.renderer2D.setLabelmap()');
+
+    var _volume = this._topLevelObjects[0];
+
+    _volume.setLabelmap(filename, this);
+
+};*/
 /**
  * Convenience method to get the index of the volume container for a given
  * orientation.
@@ -613,8 +637,8 @@ X.renderer2D.prototype.update  = function(object) {
  */
 X.renderer2D.prototype.update_ = function(object) {
 
-    //window.console.log('X.renderer2d.update_() - ' + this.orientation);
-    //window.console.log(object);
+    window.console.log('X.renderer2d.update_() - ' + this.orientation);
+    window.console.log(object);
 
     // call the update_ method of the superclass
     goog.base(this, 'update_', object);
@@ -649,7 +673,7 @@ X.renderer2D.prototype.update_ = function(object) {
     if (goog.isDefAndNotNull(labelmap) && goog.isDefAndNotNull(labelmap._file) &&
 	labelmap._file._dirty) {
 
-	//window.console.log('X.renderer2d.update_ labelMap!');
+	window.console.log('X.renderer2d.update_ labelMap!');
 
 	// a labelmap file is associated to this object and it is dirty..
 	// background: we always want to parse label maps first
@@ -725,7 +749,7 @@ X.renderer2D.prototype.update_ = function(object) {
     // with one file
     else if (goog.isDefAndNotNull(file) && file._dirty) {
 
-	//window.console.log('X.renderer2d.update_ just one file!');
+	window.console.log('X.renderer2d.update_ just one file!');
 
 	// this object is based on an external file and it is dirty..
 	// start loading..
@@ -841,9 +865,9 @@ X.renderer2D.prototype.onSliceNavigation = function() {
 X.renderer2D.prototype.ijk2xy = function(_ijk) {
 
 
-    console.log('X.renderer2D.ijk2xy()');
-    console.log('DOING - ' + this._orientation);
-    console.log('=================== ');
+    //console.log('X.renderer2D.ijk2xy()');
+    //console.log('DOING - ' + this._orientation);
+    //console.log('=================== ');
 
 
     //console.log('IJK = ');
@@ -1009,146 +1033,6 @@ X.renderer2D.prototype.ijk2xy = function(_ijk) {
 };
 
 
-X.renderer2D.prototype.ij2xy = function(i, j) {
-    //passing in slice indeces
-
-    //console.log('X.renderer2D.ij2xy(' + i + ', ' + j + ')');
-    //console.log('DOING - ' + this._orientation);
-    //console.log('=================== ');
-
-
-    var _volume = this._topLevelObjects[0];
-    var _view = this._camera._view;
-    var _currentSlice = null;
-
-    var _sliceWidth = this._sliceWidth;
-    var _sliceHeight = this._sliceHeight;
-    var _sliceWSpacing = null;
-    var _sliceHSpacing = null;
-
-    // get current slice
-    // which color?
-
-    var directionX = true;
-    var directionY = true;
-
-    if (this._orientation == "Y") {
-	var dirX = _volume._childrenInfo[0]._sliceDirection;
-	var dirY = _volume._childrenInfo[2]._sliceDirection;
-
-	if(dirX[0] >= 0)
-	    directionX = false;
-	if(dirY[2] >= 0)
-	    directionY = false;
-
-
-
-	_currentSlice = this._slices[parseInt(_volume['indexY'], 10)];
-	_sliceWSpacing = _currentSlice._widthSpacing;
-	_sliceHSpacing = _currentSlice._heightSpacing;
-
-
-    } else if (this._orientation == "Z") {
-
-	var dirX = _volume._childrenInfo[0]._sliceDirection;
-	var dirY = _volume._childrenInfo[1]._sliceDirection;
-
-	if(dirX[0] >= 0)
-	    directionX = false;
-	if(dirY[1] >= 0)
-	    directionY = false;	   
-
-	_currentSlice = this._slices[parseInt(_volume['indexZ'], 10)];
-	_sliceWSpacing = _currentSlice._widthSpacing;
-	_sliceHSpacing = _currentSlice._heightSpacing;
-
-
-    } else {
-	//X = SPECIAL CASE	
-
-	var dirX = _volume._childrenInfo[2]._sliceDirection;
-	var dirY = _volume._childrenInfo[1]._sliceDirection;
-
-	if(dirX[2] >= 0)
-	    directionY = false;
-	if(dirY[1] >= 0)
-	    directionX = false;
-
-
-	_currentSlice = this._slices[parseInt(_volume['indexX'], 10)];
-	_sliceWSpacing = _currentSlice._heightSpacing;
-	_sliceHSpacing = _currentSlice._widthSpacing;
-
-
-	var _buf = _sliceWidth;
-	_sliceWidth = _sliceHeight;
-	_sliceHeight = _buf;
-    }
-
-    //console.log('SLICEWIDTH = ' + _sliceWidth)
-    //console.log('SLICEHEIGHT = ' + _sliceHeight)
-
-
-    // padding offsets
-    var _x = 1 * _view[12];
-    var _y = -1 * _view[13]; // we need to flip y here
-
-    // .. and zoom
-    var _normalizedScale = Math.max(_view[14], 0.6);
-    var _center = [this._width / 2, this._height / 2];
-
-
-
-    // the slice dimensions in canvas coordinates
-    var _sliceWidthScaled = _sliceWidth * _sliceWSpacing *
-	_normalizedScale;
-    var _sliceHeightScaled = _sliceHeight * _sliceHSpacing *
-	_normalizedScale;
-
-    //console.log('SLICEWIDTH_SCALED = ' + _sliceWidthScaled)
-    //console.log('SLICEHEIGHT+SCALED = ' + _sliceHeightScaled)
-
-    // the image borders on the left and top in canvas coordinates
-    var _image_left2xy = _center[0] - _sliceWidthScaled / 2;
-    var _image_top2xy = _center[1] - _sliceHeightScaled / 2;
-
-
-    // incorporate the padding offsets (but they have to be scaled)
-    _image_left2xy += _x * _normalizedScale;
-    _image_top2xy += _y * _normalizedScale;
-
-    //console.log('IMAGE_ORIGIN_X = ' + _image_left2xy);
-    //console.log('IMAGE_ORIGIN_Y = ' + _image_top2xy);
-
-    var percentageW = 0;
-    var pixX = 0;
-
-    percentageW = (i)/_sliceWidth;
-
-
-    //console.log('PERCENTAGE_W = ' + percentageW);
-
-    if(directionX)
-	pixX = Math.round(_image_left2xy + (percentageW * _sliceWidthScaled));
-    else
-	pixX = Math.round(_image_left2xy + _sliceWidthScaled - (percentageW * _sliceWidthScaled));
-
-
-    var percentageH = 0;
-    var pixY = 0;
-
-    percentageH = (j)/_sliceHeight;
-    //console.log('PERCENTAGE_H = ' + percentageH);
-
-
-    if(directionY)
-	pixY = Math.round(_image_top2xy + (percentageH * _sliceHeightScaled));
-    else
-	pixY = Math.round(_image_top2xy + _sliceHeightScaled - (percentageH * _sliceHeightScaled));
-
-    return [pixX, pixY];
-
-}
 
 /**
  * Convert viewport (canvas) coordinates to volume (index) coordinates.
@@ -1300,37 +1184,10 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 
 
 	//MATRIX MULT ==========================================
-	//console.log(_xyz);
 
 	var _ijk = goog.vec.Mat4.createFloat32();
 	goog.vec.Mat4.multVec4(_currentSlice._XYToIJK, _xyz, _ijk);
 	
-
-	/*
-	  //POSSIBLE TO REVERSE THE MATRIX MULTIPLICATION!! :)
-
-	console.log('M1:');
-	console.log(_currentSlice._XYToIJK);	
-
-
-	console.log('M2:');
-	console.log(_xyz);
-
-	console.log('M1 x M2 = M3:');
-	console.log(_ijk);
-
-	var invert = goog.vec.Mat4.createFloat32();
-	goog.vec.Mat4.invert(_currentSlice._XYToIJK, invert);
-	//console.log(invert);
-
-	var _test = goog.vec.Mat4.createFloat32();	
-	goog.vec.Mat4.multVec4(invert, _ijk, _test);
-
-	console.log('M1(-1) x M3 = M2:');
-	console.log(_test);
-	*/
-
-	//SAFE TO IGNORE THE REST BELOW, JUST LOOK AT _IJK
 
 
 	var _ras = goog.vec.Mat4.createFloat32();
@@ -1384,6 +1241,7 @@ X.renderer2D.prototype.xy2ijk = function(x, y) {
 	    _iz = 0;
 	}
 	
+	//console.log([_ix, _iy, _iz]);
 	return [[_ix, _iy, _iz], [_ijk[0], _ijk[1], _ijk[2]], [_ras[0], _ras[1], _ras[2]]];
     }
 
@@ -1552,6 +1410,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
 		//PROBLEM HERE - ONLY X SLICE GETS UPDATED!
 		var _redraw_required = (this._colArrayChanged ==  true ||
+					this._labelArrayChanged ==  true ||
 					this._currentSliceId != _currentSliceId ||
 					this._currentSlice != _currentSlice ||
 					this._lowerThreshold != _lowerThreshold ||
@@ -1673,15 +1532,31 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 				// check if all labels are shown or only one
 				if (_labelmapShowOnlyColor[3] == -255) {
 
+
+				    var alpha = 0;
+
+				    if((_labelData[_index] + _labelData[_index + 1] + 
+					_labelData[_index + 2]) > 0)
+					alpha = 255;
+				    
 				    // all labels are shown
-				    _label = [_labelData[_index], 
-					      _labelData[_index + 1],
-					      _labelData[_index + 2], 
-					      _labelData[_index + 3]];
+				    /*
+				    console.log([
+					_labelData[_index],
+					_labelData[_index + 1],		
+					_labelData[_index + 2],	
+					_labelData[_index + 3]]);	*/
+				    
+				    _label = [this._labelArrayCURRENT[_labelData[_index]][0], 
+					      this._labelArrayCURRENT[_labelData[_index + 1]][1],
+					      this._labelArrayCURRENT[_labelData[_index + 2]][2],
+					      alpha];
+
 				} else {
 				    // show only the label which matches in color
 				    if (X.array.compare(_labelmapShowOnlyColor, _labelData, 0, _index,
 							4)) {
+					console.log('2');
 
 					// this label matches
 					_label = [_labelData[_index], 
@@ -1753,7 +1628,7 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 		    _volume._modified = false;
 
 		    this._colArrayChanged = false;
-		    
+		    this._labelArrayChanged = false;		    
 
 		    if (_currentLabelMap) {
 
@@ -1845,7 +1720,8 @@ goog.exportSymbol('X.renderer2D.prototype.update',
 
 goog.exportSymbol('X.renderer2D.prototype.setColortable',
 		  X.renderer2D.prototype.setColortable);
-
+goog.exportSymbol('X.renderer2D.prototype.setLabelmapColortable',
+		  X.renderer2D.prototype.setLabelmapColortable);
 goog.exportSymbol('X.renderer2D.prototype.onSliceNavigation', X.renderer2D.prototype.onSliceNavigation);
 /*
   goog.exportSymbol('X.renderer2D.prototype.resetColorTable', X.renderer2D.prototype.resetColorTable);*/

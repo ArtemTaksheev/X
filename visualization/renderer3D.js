@@ -555,6 +555,11 @@ X.renderer3D.prototype.setColortable = function(index) {
 
 };
 
+X.renderer3D.prototype.setLabelmapColortable = function(index) {
+
+    window.console.log('X.renderer3D.setLabelmapColortable(' + index + ')');
+};
+
 
 
 X.renderer3D.prototype.resetTextures = function(){
@@ -2566,5 +2571,7 @@ goog.exportSymbol('X.renderer3D.prototype.update',
 		  X.renderer3D.prototype.update);
 goog.exportSymbol('X.renderer3D.prototype.setColortable',
 		  X.renderer3D.prototype.setColortable);
+goog.exportSymbol('X.renderer3D.prototype.setLabelmapColortable',
+		  X.renderer3D.prototype.setLabelmapColortable);
 goog.exportSymbol('X.renderer3D.prototype.resetTextures',
 		  X.renderer3D.prototype.resetTextures);

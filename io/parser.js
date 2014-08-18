@@ -1239,6 +1239,10 @@ X.parser.prototype.reslice = function(object) {
     if (object.hasLabelMap) {
 	// if this object has a labelmap,
 	// we have it loaded at this point (for sure)
+
+	// D.B. - BECAUSE LABELMAPS ARE PRESUMABLY ALWAYS LOADED FIRST?
+	// - issue is WE DONT HAVE IT LOADED AT THIS POINT!
+
 	// ..so we can attach it as the second texture to this slice
 	_slice._labelmap = object._labelmap._children[0]._children[Math.floor(object._childrenInfo[0]._nb/2)]._texture;
     }

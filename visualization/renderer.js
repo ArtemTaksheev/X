@@ -1032,6 +1032,8 @@ X.renderer = function() {
 
 
     this._colArrayCURRENT = this._colArrayDEFAULT;
+    this._labelArrayCURRENT = this._colArrayIDS;
+
     this._colArrayChanged = false;
 
 

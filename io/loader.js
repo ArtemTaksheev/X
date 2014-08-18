@@ -200,6 +200,13 @@ X.loader.prototype.load = function(container, object) {
 
     window.console.log('X.loader.load()');
 
+    window.console.log('CONTAINER = ');
+    window.console.log(container);
+
+    window.console.log('OBJECT = ');
+    window.console.log(object);
+
+
     if (!container || !object) {
 
 	// should not happen

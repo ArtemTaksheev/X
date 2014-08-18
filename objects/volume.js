@@ -363,6 +363,35 @@ X.volume.prototype.setColortable = function(colTableFile, rendererArray) {
 };
 
 
+
+
+X.volume.prototype.setLabelmap = function(labelmapFile, labelmapFiledata, Xrenderer) {
+
+    window.console.log('X.volume.setLabelmap()');
+
+    var labelmap = new X.labelmap(this);
+    labelmap.file = labelmapFile; 
+    labelmap.filedata = labelmapFiledata;
+   
+    console.log(labelmap);
+    
+    this.hasLabelMap = true;
+
+    this._labelmap = labelmap;
+
+    console.log(this);
+
+    var loader = Xrenderer.loader;
+
+    loader.load(this, labelmap);
+
+};
+
+
+
+
+
+
 X.volume.prototype.create_ = function(_info) {
 
     // remove all old children
@@ -598,10 +627,15 @@ X.volume.prototype.slicing_ = function() {
 
 	    //attach labelmap
 	    if(this.hasLabelMap){
+
+		var colTable = null;
+		if(this._labelmap._colortable)
+		    colTable = this._labelmap._colortable._map;
+
 		var _sliceLabel = X.parser.reslice2(_sliceOrigin, this._childrenInfo[xyz]._sliceXYSpacing, 
 						    this._childrenInfo[xyz]._sliceNormal, this._childrenInfo[xyz]._color, 
 						    this._BBox, this._labelmap._IJKVolume, this._labelmap, 
-						    this._labelmap.hasLabelMap, this._labelmap._colortable._map);
+						    this._labelmap.hasLabelMap, colTable);
 		this._labelmap._children[xyz]._children[parseInt(currentIndex, 10)] = _sliceLabel;
 		// add it to create the texture
 		this._labelmap._children[xyz].modified(true);
@@ -1020,7 +1054,6 @@ X.volume.prototype.__defineSetter__('indexY', function(indexY) {
 	this.modified(false);
 
     }
-
 });
 
 
@@ -2050,3 +2083,4 @@ goog.exportSymbol('X.volume.prototype.onComputingProgress', X.volume.prototype.o
 goog.exportSymbol('X.volume.prototype.onComputingEnd', X.volume.prototype.onComputingEnd);
 goog.exportSymbol('X.volume.prototype.clearChildren', X.volume.prototype.clearChildren);
 goog.exportSymbol('X.volume.prototype.setColortable', X.volume.prototype.setColortable);
+goog.exportSymbol('X.volume.prototype.setLabelmap', X.volume.prototype.setLabelmap);
