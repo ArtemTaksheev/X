@@ -367,6 +367,9 @@ X.loader.prototype.complete = function(event) {
 	var container = event._container;
 	var object = event._object;
 
+	console.log('CONTAINER = ');
+	console.log(container);
+
 	// mark the container's file as clean
 	container._file._dirty = false;
 

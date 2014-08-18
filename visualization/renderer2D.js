@@ -675,6 +675,9 @@ X.renderer2D.prototype.update_ = function(object) {
 
 	window.console.log('X.renderer2d.update_ labelMap!');
 
+	if(labelmap._file._dirty)
+	    console.log('IS DIRTY!');
+
 	// a labelmap file is associated to this object and it is dirty..
 	// background: we always want to parse label maps first
 	// run the update_ function on the labelmap object
@@ -1281,20 +1284,24 @@ X.renderer2D.prototype.render_ = function(picking, invoked) {
 
     if(_volume){
 	if(this.loader){
-	    if(!this.loader.completed()){
+
+	    
+	    //DETERMINE WHICH SLICE TO PICK
+	    var _currentSlice = null;
+	    if (this._orientationIndex == 0) {
+		_currentSlice = _volume['indexX'];
+	    } else if (this._orientationIndex == 1) {
+		_currentSlice = _volume['indexY'];
+	    } else {
+		_currentSlice = _volume['indexZ'];
+	    }
+
+
+	    if(!this.loader.completed() || !this._slices[parseInt(_currentSlice, 10)]){
 		window.console.log('LOADER NOT COMPLETED');
 	    }
 	    else{
 		
-		//DETERMINE WHICH SLICE TO PICK
-		var _currentSlice = null;
-		if (this._orientationIndex == 0) {
-		    _currentSlice = _volume['indexX'];
-		} else if (this._orientationIndex == 1) {
-		    _currentSlice = _volume['indexY'];
-		} else {
-		    _currentSlice = _volume['indexZ'];
-		}
 		//window.console.log('renderer2D.render_() : current slice = ' + _currentSlice);
 		
 

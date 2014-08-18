@@ -373,18 +373,20 @@ X.volume.prototype.setLabelmap = function(labelmapFile, labelmapFiledata, Xrende
     labelmap.file = labelmapFile; 
     labelmap.filedata = labelmapFiledata;
    
-    console.log(labelmap);
-    
     this.hasLabelMap = true;
 
     this._labelmap = labelmap;
 
-    console.log(this);
-
     var loader = Xrenderer.loader;
 
-    loader.load(this, labelmap);
+    loader.load(labelmap, labelmap);
 
+
+    this.clearChildren(0);
+    this.clearChildren(1);
+    this.clearChildren(2);
+
+    return labelmap;
 };
 
 
@@ -1551,8 +1553,12 @@ X.volume.prototype.clearChildren = function(index){
 	    
 	    if(this.hasLabelMap) {
 		// add it to create the texture
-		this._labelmap._children[index]._children[i].remove();
-		this._labelmap._children[index]._children[i] = null;
+		if(this._labelmap){
+		    if(this._labelmap._children[index]){
+			this._labelmap._children[index]._children[i].remove();
+			this._labelmap._children[index]._children[i] = null;
+		    }
+		}
 	    }
 	    if(this._children[index]._children[i]){
 		this._children[index]._children[i].remove();
