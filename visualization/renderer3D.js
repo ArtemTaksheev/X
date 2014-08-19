@@ -529,7 +529,7 @@ X.renderer3D.prototype.addShaders = function(shaders) {
  */
 X.renderer3D.prototype.setColortable = function(index) {
 
-    window.console.log('X.renderer3D.setColortable(' + index + ')');
+    //window.console.log('X.renderer3D.setColortable(' + index + ')');
 
     var _volume = this._topLevelObjects[0];
 
@@ -558,7 +558,7 @@ X.renderer3D.prototype.setColortable = function(index) {
 
 X.renderer3D.prototype.setLabelmapColortable = function(index) {
 
-    window.console.log('X.renderer3D.setLabelmapColortable(' + index + ')');
+    //window.console.log('X.renderer3D.setLabelmapColortable(' + index + ')');
 
 
     var _volume = this._topLevelObjects[0];
@@ -576,7 +576,7 @@ X.renderer3D.prototype.setLabelmapColortable = function(index) {
 
     var labelmap = _volume._labelmap;
 
-    console.log(labelmap);
+    //console.log(labelmap);
 
     for (var i = 0; i < labelmap._children.length; i++){ 
 	for(var j = 0; j < labelmap._children[i]._children.length; j++){
@@ -624,9 +624,9 @@ X.renderer3D.prototype.update_ = function(object) {
     goog.base(this, 'update_', object);
     window.console.log('X.renderer3d.update_()...');
 
-    console.log('OBJECT = ');
-    if(object)
-	console.log(object);
+    //console.log('OBJECT = ');
+    //if(object)
+    //console.log(object);
 
     // check if object already existed..
     var existed = false;
@@ -820,7 +820,7 @@ X.renderer3D.prototype.update_ = function(object) {
     // check if this is an X.slice as part of a X.labelmap
     var isLabelMap = (object instanceof X.slice && object._volume instanceof X.labelmap);
 
-    console.log('isLabelMap: ' + isLabelMap);
+    //console.log('isLabelMap: ' + isLabelMap);
 
     //
     // TEXTURE
@@ -828,7 +828,7 @@ X.renderer3D.prototype.update_ = function(object) {
 
     if (existed && goog.isDefAndNotNull(texture) && texture._dirty) {
 
-	window.console.log('TEXTURE1');
+	//window.console.log('TEXTURE1');
 
 	// this means the object already existed and the texture is dirty
 	// therefore, we delete the old gl buffers
@@ -849,7 +849,7 @@ X.renderer3D.prototype.update_ = function(object) {
     if (goog.isDefAndNotNull(texture)) {
 	// texture associated to this object
 
-	window.console.log('TEXTURE2');
+	//window.console.log('TEXTURE2');
 
 	if (!existed || texture._dirty) {
 
@@ -903,6 +903,7 @@ X.renderer3D.prototype.update_ = function(object) {
 		}
 
 		var dst = new Uint8Array(texture._rawData);
+		//console.log(dst);
 
 		for(var i = 0; i < dst.length; i+=4){
 
@@ -942,6 +943,13 @@ X.renderer3D.prototype.update_ = function(object) {
 			dst[i] = this._labelArrayCURRENT[rIndex][0];
 			dst[i+1] = this._labelArrayCURRENT[gIndex][1];
 			dst[i+2] = this._labelArrayCURRENT[bIndex][2];
+
+
+			if((texture._rawData[i] + 
+			    texture._rawData[i + 1] + 
+			    texture._rawData[i + 2]) == 0)
+			    dst[i + 3] = 0;
+			//dst[i+3] = 0.5;
 		    }
 		}
 		// use rawData rather than loading an imagefile

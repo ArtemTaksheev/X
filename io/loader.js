@@ -200,11 +200,11 @@ X.loader.prototype.load = function(container, object) {
 
     window.console.log('X.loader.load()');
 
-    window.console.log('CONTAINER = ');
-    window.console.log(container);
+    //window.console.log('CONTAINER = ');
+    //window.console.log(container);
 
-    window.console.log('OBJECT = ');
-    window.console.log(object);
+    //window.console.log('OBJECT = ');
+    //window.console.log(object);
 
 
     if (!container || !object) {
@@ -231,7 +231,7 @@ X.loader.prototype.load = function(container, object) {
 
     if (container._filedata != null) {
 
-	window.console.log('X.loader.load() - raw file data present');
+	//window.console.log('X.loader.load() - raw file data present');
 
 	// we have raw file data attached and therefor can skip the loading
 	this.parse(null, container, object);
@@ -245,7 +245,7 @@ X.loader.prototype.load = function(container, object) {
     // this works for binary and for ascii files
     var request = new XMLHttpRequest();
 
-    window.console.log('X.loader.load() - running XMLHttpRequest');
+    //window.console.log('X.loader.load() - running XMLHttpRequest');
 
     // listen to abort events
     goog.events.listen(request, 'abort', this.failed.bind(this, request,
@@ -367,8 +367,8 @@ X.loader.prototype.complete = function(event) {
 	var container = event._container;
 	var object = event._object;
 
-	console.log('CONTAINER = ');
-	console.log(container);
+	//console.log('CONTAINER = ');
+	//console.log(container);
 
 	// mark the container's file as clean
 	container._file._dirty = false;
@@ -383,7 +383,7 @@ X.loader.prototype.complete = function(event) {
 
 	
 	if(event._message && event._message == 'colortable'){
-	    window.console.log('COLORTABLE WAS LOADED');	 
+	    //window.console.log('COLORTABLE WAS LOADED');	 
 	    object.modifiedColortable();
 	}
 	else
@@ -395,7 +395,7 @@ X.loader.prototype.complete = function(event) {
 
     }.bind(this), 100);
 
-    window.console.log('X.loader.complete() - END');
+    //window.console.log('X.loader.complete() - END');
 
 };
 
